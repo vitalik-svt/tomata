@@ -1,18 +1,33 @@
 import os
 from enum import Enum
 import datetime as dt
-from typing import Optional, List
-
-from pydantic import ConfigDict, BaseModel, Field, EmailStr
+from typing import Optional, List, Dict
+from pydantic import ConfigDict, BaseModel, Field, EmailStr, model_validator
 from pydantic.functional_validators import BeforeValidator
 
 from typing_extensions import Annotated
 
-class EventType(str, Enum):
-    ga_remove_from_shopping_list="GA:removeFromShoppingList"
 
-class EventData(BaseModel):
-    pass
+class EventType(str, Enum):
+    ga_remove_from_shopping_list = "GA:removeFromShoppingList"
+    ga_promo_click = "GA:promoClick"
+
+    default_event_data = {
+        "GA:removeFromShoppingList": {
+            "action": "remove",
+            "item_type": "shopping_list",
+            "source": "GA"
+        },
+        "GA:promoClick": {
+            "action": "click",
+            "promotion": "promo",
+            "source": "GA"
+        }
+    }
+
+    @classmethod
+    def get_default_event_data(cls, event_type: "EventType") -> Dict[str, Optional[str]]:
+        return cls.default_event_data.get(event_type.value, {}).copy()
 
 class Image(BaseModel):
     image_path: str
@@ -21,7 +36,16 @@ class Event(BaseModel):
     type: EventType
     images: Optional[List[Image]]
     description: Optional[str] = None
-    event_data: EventData
+    event_data: Dict[str, Optional[str]] = Field(default_factory=dict)
+
+    @model_validator(mode="before")
+    def set_default_event_data(cls, values):
+        """Set data based on type by default"""
+        event_type = values.get("type")
+        if event_type:
+            values.setdefault("event_data", EventType.get_default_event_data(event_type))
+        return values
+
 
 class Action(BaseModel):
     name: str

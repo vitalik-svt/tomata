@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from app.core.database import (get_collection,
                                create_assignment, get_assignment, update_assignment, delete_assignment)
-from app.core.models import Assignment, assignment_default
+from app.core.models import Assignment, assignment_to_js_schema, assignment_default
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -34,11 +34,10 @@ async def list_assignments_route(
 @router.get("/assignment/new")
 async def create_assignment_route(request: Request):
     assignment_data = assignment_default.dict(exclude_unset=True)
-    assignment_schema = Assignment.schema()
     return templates.TemplateResponse("edit.html", {
         "request": request,
         "assignment": assignment_data,
-        "assignment_schema": assignment_schema,
+        "assignment_schema": assignment_to_js_schema(),
         "is_edit": False
     })
 
@@ -67,7 +66,12 @@ async def get_assignment_route(
     assignment = await get_assignment(assignment_id, collection)
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
-    return templates.TemplateResponse("edit.html", {"request": request, "assignment": assignment, "is_edit": bool(assignment_id)})
+    return templates.TemplateResponse("edit.html", {
+        "request": request,
+        "assignment": assignment,
+        "assignment_schema": assignment_to_js_schema(),
+        "is_edit": bool(assignment_id)
+    })
 
 
 @router.post("/assignment/{assignment_id}")
@@ -80,6 +84,7 @@ async def save_assignment_route(
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
 
+    updated_assignment.updated_at = dt.datetime.now().isoformat()
     updated_data_dict = updated_assignment.dict(exclude_unset=True)
     await update_assignment(assignment_id, updated_data_dict, collection)
     return {**assignment, **updated_data_dict}

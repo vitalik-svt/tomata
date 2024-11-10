@@ -34,7 +34,13 @@ async def list_assignments_route(
 @router.get("/assignment/new")
 async def create_assignment_route(request: Request):
     assignment_data = assignment_default.dict(exclude_unset=True)
-    return templates.TemplateResponse("edit.html", {"request": request, "assignment": assignment_data, "is_edit": False})
+    assignment_schema = Assignment.schema()
+    return templates.TemplateResponse("edit.html", {
+        "request": request,
+        "assignment": assignment_data,
+        "assignment_schema": assignment_schema,
+        "is_edit": False
+    })
 
 
 @router.post("/assignment/new")
@@ -49,13 +55,13 @@ async def create_assignment_route(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error creating assignment: {e}")
 
-    return RedirectResponse(url=f"/assignment/{assignment_id}", status_code=200)
+    return JSONResponse(content={"id": assignment_id})  # we will redirect to get /assignment/{assignment_id} on frontend
 
 
 @router.get("/assignment/{assignment_id}")
 async def get_assignment_route(
     request: Request,
-    assignment_id: Optional[str] = None,
+    assignment_id: str,
     collection: AsyncIOMotorCollection = Depends(get_collection)
 ):
     assignment = await get_assignment(assignment_id, collection)

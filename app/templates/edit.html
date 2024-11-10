@@ -4,66 +4,8 @@
 <div class="container mt-4 text-center">
     <h5>{% if is_edit %} Edit Assignment {% else %} Create Assignment {% endif %}</h5>
 
-    <!-- Assignment Form -->
-    <form id="assignment-form" method="POST">
-        <div class="form-group">
-            <label for="assignment_name">Assignment Name</label>
-            <input type="text" class="form-control" id="assignment_name" name="assignment_name" value="{{ assignment.assignment_name }}" required>
-        </div>
-        <div class="form-group">
-            <label for="assignment_description">Description</label>
-            <textarea class="form-control" id="assignment_description" name="assignment_description">{{ assignment.assignment_description }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text" class="form-control" id="author" name="author" value="{{ assignment.author }}" required>
-        </div>
-
-        <!-- Dynamic Actions -->
-        <div id="actions-container" class="mt-4">
-            <h6>Actions</h6>
-            {% for action in assignment.actions %}
-                <div class="action-item" data-index="{{ loop.index0 }}">
-                    <div class="form-group">
-                        <label for="action_name_{{ loop.index0 }}">Action Name</label>
-                        <input type="text" class="form-control" id="action_name_{{ loop.index0 }}" name="actions[{{ loop.index0 }}][name]" value="{{ action.name }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_description_{{ loop.index0 }}">Description</label>
-                        <textarea class="form-control" id="action_description_{{ loop.index0 }}" name="actions[{{ loop.index0 }}][description]">{{ action.description }}</textarea>
-                    </div>
-
-                    <!-- Dynamic Events for each Action -->
-                    <div id="events-container_{{ loop.index0 }}">
-                        <h6>Events</h6>
-                        {% for event in action.events %}
-                            <div class="event-item" data-action-index="{{ loop.index0 }}" data-event-index="{{ loop.index1 }}">
-                                <div class="form-group">
-                                    <label for="event_type_{{ loop.index0 }}_{{ loop.index1 }}">Event Type</label>
-                                    <input type="text" class="form-control" id="event_type_{{ loop.index0 }}_{{ loop.index1 }}" name="actions[{{ loop.index0 }}][events][{{ loop.index1 }}][type]" value="{{ event.type }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="event_description_{{ loop.index0 }}_{{ loop.index1 }}">Event Description</label>
-                                    <textarea class="form-control" id="event_description_{{ loop.index0 }}_{{ loop.index1 }}" name="actions[{{ loop.index0 }}][events][{{ loop.index1 }}][description]">{{ event.description }}</textarea>
-                                </div>
-                                <button type="button" class="btn btn-danger btn-sm remove-event" onclick="removeEvent({{ loop.index0 }}, {{ loop.index1 }})">Remove Event</button>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm add-event" onclick="addEvent({{ loop.index0 }})">Add Event</button>
-
-                    <button type="button" class="btn btn-danger btn-sm remove-action" onclick="removeAction({{ loop.index0 }})">Remove Action</button>
-                    <hr>
-                </div>
-            {% endfor %}
-        </div>
-
-        <!-- Add New Action Button -->
-        <div class="btn-container mt-4">
-            <button type="button" class="btn btn-primary btn-custom" onclick="addAction()">Add Action</button>
-        </div>
-
-    </form>
+    <!-- JSON Editor Holder -->
+    <div id="editor_holder"></div>
 
     <!-- Action Buttons (Save, Print, Delete) -->
     <div class="btn-container-horizontal mt-4 d-flex justify-content-center">
@@ -78,11 +20,46 @@
             <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment._id }}')">Delete Assignment</button>
         {% endif %}
     </div>
-
-
 </div>
 
+<!-- Подключаем JSON Editor -->
+<script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+
+<script>
+    // get schema
+    const schema = {{ assignment_schema | tojson }};
+    const initialData = {{ assignment | tojson }};
+
+    const element = document.getElementById('editor_holder');
+    const editor = new JSONEditor(element, {
+        schema: schema,
+        startval: initialData,
+        theme: 'bootstrap5',  // Используем Bootstrap 5 тему для JSON Editor
+        iconlib: 'fontawesome5',  // Используем Font Awesome 4 для иконок
+        {#use_default_values: false,#}
+        {#use_name_attributes: false,#}
+        {#prompt_before_delete: false,#}
+        {#case_sensitive_property_search: false,#}
+        {#required_by_default: false,#}
+        {#display_required_only: false,#}
+        {#show_opt_in: false,#}
+        {#no_additional_properties: false,#}
+        {#ajax: false,#}
+        {#disable_edit_json: true,#}
+        {#disable_collapse: true,#}
+        {#disable_properties: true,#}
+        {#disable_array_add: false,#}
+        {#disable_array_reorder: false,#}
+        {#disable_array_delete: false,#}
+        {#enable_array_copy: false,#}
+        {#array_controls_top: false,#}
+        {#disable_array_delete_all_rows: true,#}
+        {#disable_array_delete_last_row: true,#}
+    });
+
+
+</script>
+
 <script src="{{ url_for('static', path='js/actions.js') }}"></script>
-<script src="{{ url_for('static', path='js/editing.js') }}"></script>
 
 {% endblock %}

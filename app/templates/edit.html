@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4 text-center">
+    <h5>{% if is_edit %} Edit Assignment {% else %} Create Assignment {% endif %}</h5>
+
+    <!-- Assignment Form -->
+    <form id="assignment-form" method="POST">
+        <div class="form-group">
+            <label for="assignment_name">Assignment Name</label>
+            <input type="text" class="form-control" id="assignment_name" name="assignment_name" value="{{ assignment['assignment_name'] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="assignment_description">Description</label>
+            <textarea class="form-control" id="assignment_description" name="assignment_description">{{ assignment['assignment_description'] }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="author">Author</label>
+            <input type="text" class="form-control" id="author" name="author" value="{{ assignment['author'] }}" required>
+        </div>
+
+        <!-- Dynamic Actions -->
+        <div id="actions-container" class="mt-4">
+            <h6>Actions</h6>
+            {% for action in assignment['actions'] %}
+                <div class="action-item" data-index="{{ loop.index0 }}">
+                    <div class="form-group">
+                        <label for="action_name_{{ loop.index0 }}">Action Name</label>
+                        <input type="text" class="form-control" id="action_name_{{ loop.index0 }}" name="actions[{{ loop.index0 }}][name]" value="{{ action['name'] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_description_{{ loop.index0 }}">Description</label>
+                        <textarea class="form-control" id="action_description_{{ loop.index0 }}" name="actions[{{ loop.index0 }}][description]">{{ action['description'] }}</textarea>
+                    </div>
+
+                    <!-- Dynamic Events for each Action -->
+                    <div id="events-container_{{ loop.index0 }}">
+                        <h6>Events</h6>
+                        {% for event in action['events'] %}
+                            <div class="event-item" data-action-index="{{ loop.index0 }}" data-event-index="{{ loop.index1 }}">
+                                <div class="form-group">
+                                    <label for="event_type_{{ loop.index0 }}_{{ loop.index1 }}">Event Type</label>
+                                    <input type="text" class="form-control" id="event_type_{{ loop.index0 }}_{{ loop.index1 }}" name="actions[{{ loop.index0 }}][events][{{ loop.index1 }}][type]" value="{{ event['type'] }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="event_description_{{ loop.index0 }}_{{ loop.index1 }}">Event Description</label>
+                                    <textarea class="form-control" id="event_description_{{ loop.index0 }}_{{ loop.index1 }}" name="actions[{{ loop.index0 }}][events][{{ loop.index1 }}][description]">{{ event['description'] }}</textarea>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm remove-event" onclick="removeEvent({{ loop.index0 }}, {{ loop.index1 }})">Remove Event</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm add-event" onclick="addEvent({{ loop.index0 }})">Add Event</button>
+
+                    <button type="button" class="btn btn-danger btn-sm remove-action" onclick="removeAction({{ loop.index0 }})">Remove Action</button>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add New Action Button -->
+        <div class="btn-container mt-4">
+            <button type="button" class="btn btn-primary btn-custom" onclick="addAction()">Add Action</button>
+        </div>
+
+        <!-- Save Assignment Button -->
+        <div class="btn-container mt-4">
+            {% if is_edit %}
+                <button type="button" class="btn btn-success btn-custom" onclick="saveExistingAssignment()">Save Assignment</button>
+            {% else %}
+                <button type="button" class="btn btn-success btn-custom" onclick="createNewAssignment()">Create Assignment</button>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Conditional Delete Button -->
+    {% if is_edit %}
+    <div class="btn-container mt-4">
+        <button class="btn btn-danger btn-custom" onclick="deleteAssignment()">Delete Assignment</button>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Function to add a new action
+    function addAction() {
+        const container = document.getElementById('actions-container');
+        const index = container.children.length;
+
+        const actionHTML = `
+            <div class="action-item" data-index="${index}">
+                <div class="form-group">
+                    <label for="action_name_${index}">Action Name</label>
+                    <input type="text" class="form-control" id="action_name_${index}" name="actions[${index}][name]" required>
+                </div>
+                <div class="form-group">
+                    <label for="action_description_${index}">Description</label>
+                    <textarea class="form-control" id="action_description_${index}" name="actions[${index}][description]"></textarea>
+                </div>
+
+                <div id="events-container_${index}">
+                    <h6>Events</h6>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm add-event" onclick="addEvent(${index})">Add Event</button>
+
+                <button type="button" class="btn btn-danger btn-sm remove-action" onclick="removeAction(${index})">Remove Action</button>
+                <hr>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', actionHTML);
+    }
+
+    function saveExistingAssignment() {
+        const formData = new FormData(document.getElementById("assignment-form"));
+        const data = Object.fromEntries(formData);
+
+        fetch(`/assignment/{{ assignment['_id'] }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                alert("Assignment saved successfully!");
+                window.location.href = `/assignment/{{ assignment['_id'] }}`;
+            } else {
+                alert("Error saving assignment!");
+            }
+        }).catch(error => alert("Error: " + error));
+    }
+
+    function createNewAssignment() {
+        const formData = new FormData(document.getElementById("assignment-form"));
+        const data = Object.fromEntries(formData);
+
+        fetch(`/assignment/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                alert("New assignment created successfully!");
+                response.json().then(data => {
+                    window.location.href = `/assignment/${data.id}`;
+                });
+            } else {
+                alert("Error creating assignment!");
+            }
+        }).catch(error => alert("Error: " + error));
+    }
+
+    function deleteAssignment() {
+        if (confirm("Are you sure you want to delete this assignment?")) {
+            fetch(`/assignment/{{ assignment['_id'] }}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    alert("Assignment deleted successfully!");
+                    window.location.href = "/assignments";
+                } else {
+                    alert("Error deleting assignment!");
+                }
+            }).catch(error => alert("Error: " + error));
+        }
+    }
+</script>
+
+{% endblock %}

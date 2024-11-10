@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core import routes as main_router
 from app.settings import settings
@@ -17,3 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
     )
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4 text-center">
+    <div class="header mb-4">
+        <h5>Welcome to Automated Technical Assignment tool!</h5>
+    </div>
+    <div class="btn-container">
+        <!-- "create" route will generate a new assignment and redirect to /assignment/{assignment_id} -->
+        <a href="/assignment/new" class="btn btn-primary btn-custom">Create Assignment</a>
+        <a href="/assignments" class="btn btn-primary btn-custom">View Assignments</a>
+    </div>
+</div>
+
+{% endblock %}

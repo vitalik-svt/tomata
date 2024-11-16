@@ -21,7 +21,6 @@ function saveExistingAssignment(assignmentId) {
 }
 
 function createNewAssignment() {
-    // Получаем данные из JSON Editor
     const data = editor.getValue();
 
     fetch(`/assignment/new`, {
@@ -68,66 +67,27 @@ function deleteAssignment(assignmentId) {
     }
 }
 
-//
-// function printAssignment() {
-//     const data = editor.getValue();
-//
-//     console.log(JSON.stringify(data));
-//
-//     fetch("/print", {
-//         method: "POST",  // Use POST method
-//         headers: {
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify(data)
-//     })
-//     .then(response => {
-//         if (response.ok) {
-//             return response.text();  // Получаем ответ от сервера
-//         } else {
-//             alert("Error printing the assignment");
-//         }
-//     })
-//     .then(responseText => {
-//         console.log("Backend response: ", responseText);
-//         window.location.href = '/print';
-//     })
-//     .catch(error => {
-//             alert("Error: " + error);
-//     });
-// }
 
-
-function printAssignment() {
-    const data = editor.getValue();  // Получаем данные из редактора
-
-    console.log("Sending data:", JSON.stringify(data));
-
-    fetch("/print", {
-        method: "POST",  // Используем метод POST
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)  // Отправляем данные в теле запроса
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.text();  // Получаем HTML-ответ от сервера
-        } else {
-            alert("Error printing the assignment");
-        }
-    })
-    .then(responseText => {
-        console.log("Backend response:", responseText);
-
-        // Здесь ты можешь сделать что-то с HTML, например, открыть его в новом окне
-        const printWindow = window.open();
-        printWindow.document.write(responseText);  // Пишем HTML в новое окно
-        printWindow.document.close();  // Закрываем документ для рендеринга
-    })
-    .catch(error => {
-        alert("Error: " + error);
-    });
+function printAssignment(assignmentId) {
+    const confirmation = confirm("Last saved version will be printed. Make sure you saved progress!");
+    if (confirmation) {
+        fetch(`/assignment/${assignmentId}/print`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                window.open(`/assignment/${assignmentId}/print`, '_blank');
+            } else {
+                alert("Error printing the assignment");
+            }
+        })
+        .catch(error => {
+            alert("Error: " + error);
+        });
+    };
 }
 
 

@@ -4,9 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section hr {
+            margin: 10px 0;
+        }
+        .section img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>Assignment Details</h1>
-    <pre>{{ assignment_data | tojson(indent=2) }}</pre>
+
+    <!-- Render top-level properties -->
+    <div class="section">
+        <h2>Assignment Name</h2>
+        <p>{{ assignment_data.name }}</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Assignment ID</h2>
+        <p>{{ assignment_data._id }}</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Author Email</h2>
+        <p>{{ assignment_data.author }}</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Created At</h2>
+        <p>{{ assignment_data.created_at }}</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Updated At</h2>
+        <p>{{ assignment_data.updated_at }}</p>
+        <hr>
+    </div>
+
+    <div class="section">
+        <h2>Description</h2>
+        <p>{{ assignment_data.description }}</p>
+        <hr>
+    </div>
+
+    <!-- Render actions, if they exist -->
+    {% if assignment_data.actions %}
+    <div class="section">
+        <h2>Actions</h2>
+        {% for action in assignment_data.actions %}
+            <div class="section">
+                <h3>{{ action.name }}</h3>
+                <p>{{ action.description }}</p>
+                <hr>
+
+                <!-- Render events for each action -->
+                {% if action.events %}
+                    {% for event in action.events %}
+                        <div class="section">
+                            <h4>Event Type: {{ event.type }}</h4>
+                            <p>{{ event.description }}</p>
+                            <p>{{ event.event_data }}</p>
+                            <hr>
+                            {% if event.images %}
+                                <div class="section">
+                                    <h5>Event Images</h5>
+                                    {% for image in event.images %}
+                                        <img src="{{ image.file }}" alt="{{ image.description }}">
+                                    {% endfor %}
+                                    <hr>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 </body>
 </html>

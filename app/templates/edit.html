@@ -1,62 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- JSON Editor Holder -->
+<div id="editor_holder" class="p-3 border rounded shadow-sm"></div>
+
 <div class="container mt-4 text-center">
-    <h5>{% if is_edit %} Edit Assignment {% else %} Create Assignment {% endif %}</h5>
-
-    <!-- JSON Editor Holder -->
-    <div id="editor_holder"></div>
-
     <!-- Action Buttons (Save, Print, Delete) -->
     <div class="btn-container-horizontal mt-4 d-flex justify-content-center">
         {% if is_edit %}
             <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment._id }}')">Save Assignment</button>
+            <button class="btn btn-secondary btn-custom mx-2" onclick="printAssignment()">Print Assignment</button>
+            <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment._id }}')">Delete Assignment</button>
         {% else %}
             <button type="button" class="btn btn-success btn-custom mx-2" onclick="createNewAssignment()">Create Assignment</button>
-        {% endif %}
-        <button class="btn btn-secondary btn-custom mx-2" onclick="printAssignment()">Print Assignment</button>
-
-        {% if is_edit %}
-            <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment._id }}')">Delete Assignment</button>
         {% endif %}
     </div>
 </div>
 
-<!-- Подключаем JSON Editor -->
-<script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
-
+<!-- Initialize Json Editor -->
 <script>
-    // get schema
     const schema = {{ assignment_schema | tojson }};
     const initialData = {{ assignment | tojson }};
+    const eventTypeMapper = {{ event_type_mapper | tojson }};
 
     const element = document.getElementById('editor_holder');
+
     const editor = new JSONEditor(element, {
         schema: schema,
         startval: initialData,
-        theme: 'bootstrap5',  // Используем Bootstrap 5 тему для JSON Editor
-        iconlib: 'fontawesome5',  // Используем Font Awesome 4 для иконок
-        {#use_default_values: false,#}
-        {#use_name_attributes: false,#}
-        {#prompt_before_delete: false,#}
-        {#case_sensitive_property_search: false,#}
-        {#required_by_default: false,#}
-        {#display_required_only: false,#}
-        {#show_opt_in: false,#}
-        {#no_additional_properties: false,#}
-        {#ajax: false,#}
-        {#disable_edit_json: true,#}
-        {#disable_collapse: true,#}
-        {#disable_properties: true,#}
-        {#disable_array_add: false,#}
-        {#disable_array_reorder: false,#}
-        {#disable_array_delete: false,#}
-        {#enable_array_copy: false,#}
-        {#array_controls_top: false,#}
-        {#disable_array_delete_all_rows: true,#}
-        {#disable_array_delete_last_row: true,#}
+        theme: 'bootstrap5',
+        iconlib: 'bootstrap',
+        compact: true,
+        disable_collapse: false,
+        disable_edit_json: true,
+        disable_properties: true,
+        layout: "normal",
+        show_errors: "interaction",
+        array_controls_top: true,
+        use_name_attributes: true,
     });
 
+    // loop over types of events, and update events_data
+    const pattern = /^root\.actions\.\d+\.events\.\d+\.type$/
+    editor.on('change', function() {
+        Object.keys(editor.editors).forEach(key => {
+            if (editor.editors[key] && key !== 'root') {
+                const fieldPath = key; // This is the path (e.g., root.actions[0].events[0].type)
+                const newValue = editor.editors[key].getValue(); // Get the new value
+                // Check if the path matches root.actions.*.events.*.type
+                if (fieldPath.match(pattern)) {
+                    console.log(`Field with path: [${fieldPath}] changed to [${JSON.stringify(newValue)}]`);
+                    const updatedPath = fieldPath.replace(/\.type$/, '.event_data');
+                    const name = editor.getEditor(updatedPath);
+                    name.setValue(eventTypeMapper[newValue])
+                }
+            }
+        });
+    });
+
+    // make all text areas expanded to text size
+    editor.on('ready', function() {
+        const textareas = document.querySelectorAll("#editor_holder textarea");
+        textareas.forEach((textarea) => {
+            textarea.style.height = "auto"; // Reset height
+            textarea.style.height = textarea.scrollHeight + "px"; // Adjust height
+        });
+    });
 
 </script>
 

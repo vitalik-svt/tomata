@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from app.core.database import (get_collection,
                                create_assignment, get_assignment, update_assignment, delete_assignment)
-from app.core.models import Assignment, assignment_to_js_schema, assignment_default
+from app.core.models import Assignment, assignment_to_js_schema, assignment_default, event_type_mapper
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -38,7 +38,8 @@ async def create_assignment_route(request: Request):
         "request": request,
         "assignment": assignment_data,
         "assignment_schema": assignment_to_js_schema(),
-        "is_edit": False
+        "is_edit": False,
+        "event_type_mapper": event_type_mapper
     })
 
 
@@ -70,7 +71,8 @@ async def get_assignment_route(
         "request": request,
         "assignment": assignment,
         "assignment_schema": assignment_to_js_schema(),
-        "is_edit": bool(assignment_id)
+        "is_edit": bool(assignment_id),
+        "event_type_mapper": event_type_mapper
     })
 
 
@@ -101,3 +103,8 @@ async def delete_assignment_route(
 
     await delete_assignment(assignment_id, collection)
     return {"message": "Assignment deleted successfully"}
+
+
+@router.post("/print")
+async def print_route(request: Request, assignment: dict):  # Принимаем данные как dict
+    return JSONResponse(content={"assignment_data": assignment})

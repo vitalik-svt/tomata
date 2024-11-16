@@ -105,6 +105,17 @@ async def delete_assignment_route(
     return {"message": "Assignment deleted successfully"}
 
 
-@router.post("/print")
-async def print_route(request: Request, assignment: dict):  # Принимаем данные как dict
-    return JSONResponse(content={"assignment_data": assignment})
+@router.get("/assignment/{assignment_id}/print")
+async def print_page(
+        request: Request,
+        assignment_id: str,
+        collection: AsyncIOMotorCollection = Depends(get_collection)
+):
+    assignment_data = await get_assignment(assignment_id, collection)
+    if not assignment_data:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    return templates.TemplateResponse("print_page.html", {
+        "request": request,
+        "assignment_data": assignment_data,
+    })
+

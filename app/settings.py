@@ -1,4 +1,6 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
 
@@ -13,7 +15,7 @@ class Settings(BaseSettings):
     app_port: int = 8000
     app_workers: int = 1
     app_reload: bool = True
-    app_fastapi_middleware_secret_key: str = 'app_fastapi_middleware_secret_key'
+    app_fastapi_middleware_secret_key: str = os.urandom(24)
 
     # mongo
     mongo_server: str = 'mongo'

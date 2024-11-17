@@ -61,6 +61,7 @@
 
         <!-- Actions and Events -->
         {% for action in assignment_data.actions %}
+            {% set outer_loop = loop %}
             <div class="section">
                 <h3>Action {{ loop.index }}: {{ action.name }}</h3>
                 <p>{{ action.description | replace("\n", "<br>") | safe }}</p>
@@ -69,7 +70,7 @@
                 {% if action.events %}
                     {% for event in action.events %}
                         <div class="section">
-                            <p>Event {{ loop.index }} for Action {{ loop.index0 + 1 }}: </p>
+                            <p>Event {{ loop.index }} for Action {{ outer_loop.index }}: </p>
                             <h4>{{ event.type }}</h4>
                             <!-- Event images -->
                             {% if event.images %}

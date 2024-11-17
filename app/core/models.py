@@ -12,8 +12,6 @@ event_type_mapper = get_event_type_mapper("app/samples/events.yaml")
 assignment_schema = load_json(path="app/samples/schema.json", event_type_mapper=list(event_type_mapper.keys()))
 assignment_default_data = load_yaml("app/samples/default.yaml", dt=dt)
 
-print(event_type_mapper)
-
 
 class Image(BaseModel):
     file: str

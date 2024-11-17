@@ -1,7 +1,8 @@
 # AMTA
 
 AutoMated Technical Assignment tool.<br>
-Let you create, store and print Technical Assignments in particular format 
+Lets you create, store and print Technical Assignments in particular format<br>
+Convinient, if all yours assignment are in particular structure, and consists of same elements
 
 ## Development
 

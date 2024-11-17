@@ -1,0 +1,232 @@
+GA:detail:
+  - key: elementType
+    value: page
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: текущая стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productBelong
+    value: LeroyMerlin
+    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+  - key: productAvailability
+    value: S-02.12.21/D-03.12.21
+    comment: S - самовывоз и через дефис дата; / для разделения типов; D - доставка и через дефис дата; Если товар недоступен, то передавать “unavailable”
+  - key: productsQuantityAvailable
+    value: '543'
+    comment: суммарное кол-во доступных товаров по всем магазинам. Если товар недоступен - передавать 0.
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: division
+    value: Стройматериалы
+    comment: отдел, к которому относится товар, должен передаваться в текстовом формате
+  - key: subdivision
+    value: Сухие смеси и грунтовки
+    comment: подотдел, к которому относится товар, должен передаваться в текстовом формате
+  - key: wowPrice
+    value: '1'
+    comment: признак шок-цены (null если товар без шок-цены)
+
+GA:pageview:
+  - key: pageType
+    value: ProductPage
+    comment: тип страницы
+  - key: pagePath
+    value: /product/shtukaturka-gipsovaya-luchshaya-cena-30-kg-14238108/
+    comment: путь к странице
+
+GA:Shoppilot:
+  - key: elementType
+    value: product
+  - key: elementBlock
+    value: reviews
+    comment: блок, в котором расположен элемент
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: reviews
+    value: '222'
+    comment: количество отзывов
+  - key: avgRating
+    value: '4.5'
+    comment: рейтинг товара
+
+GA:findInStore:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: wowPrice
+    value: '1'
+    comment: признак шок-цены (null если товар без шок-цены)
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productBelong
+    value: LeroyMerlin
+    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+
+GA:addToCart:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productQuantity
+    value: '2'
+    comment: на какое количество единиц изменилось количество товара
+  - key: productBelong
+    value: LeroyMerlin
+    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+
+GA:removeFromCart:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productQuantity
+    value: '2'
+    comment: на какое количество единиц изменилось количество товара
+  - key: productBelong
+    value: LeroyMerlin
+    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+
+GA:clickButton:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: elementName
+    value: toBasket
+    comment: название блока
+  - key: elementText
+    value: Перейти в корзину
+    comment: условный текст кнопки
+
+GA:clickProduct:
+  - key: elementType
+    value: product
+  - key: elementBlock
+    value: productDetail / variants
+    comment: блок, в котором расположен элемент
+  - key: elementName
+    value: productPhotoLink
+    comment: название блока
+  - key: productName
+    value: Краска акриловая «Шедевр» цвет аквамарин 60 г
+    comment: название продукта, по которому кликнули
+  - key: productId
+    value: '22345678'
+    comment: идентификатор продукта, по которому кликнули
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы продукта
+  - key: productBelong
+    value: LeroyMerlin
+    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+
+GA:hover:
+  - key: elementType
+    value: hover
+  - key: elementBlock
+    value: productDetail
+    comment: блок, в котором расположен элемент
+  - key: elementName
+    value: mediaItem
+    comment: название элемента
+  - key: elementText
+    value: Новинка
+    comment: текст элемента
+
+GA:scrollPage:
+  - key: elementType
+    value: scroll
+  - key: elementBlock
+    value: pageContent
+    comment: блок, в котором происходит прокрутка страницы
+  - key: pagePosition
+    value: '50%'
+    comment: процент прокрученной страницы
+
+GA:formSubmit:
+  - key: formType
+    value: searchForm
+    comment: тип формы
+  - key: formName
+    value: "Поиск товаров"
+    comment: название формы
+  - key: formAction
+    value: submit
+    comment: действие формы
+  - key: formData
+    value: «клей для обоев»
+    comment: переданные данные в форме
+
+GA:clickCategory:
+  - key: categoryId
+    value: '2345'
+    comment: идентификатор категории
+  - key: categoryName
+    value: «Строительные материалы»
+    comment: название категории
+  - key: categoryUrl
+    value: /category/building-materials/
+    comment: URL категории

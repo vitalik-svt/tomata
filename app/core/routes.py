@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from app.core.database import (get_collection,
                                create_assignment, get_assignment, update_assignment, delete_assignment)
-from app.core.models import Assignment, assignment_to_js_schema, assignment_default, event_type_mapper
+from app.core.models import Assignment, assignment_default, event_type_mapper, assignment_schema
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -37,7 +37,7 @@ async def create_assignment_route(request: Request):
     return templates.TemplateResponse("edit.html", {
         "request": request,
         "assignment": assignment_data,
-        "assignment_schema": assignment_to_js_schema(),
+        "assignment_schema": assignment_schema,
         "is_edit": False,
         "event_type_mapper": event_type_mapper
     })
@@ -70,7 +70,7 @@ async def get_assignment_route(
     return templates.TemplateResponse("edit.html", {
         "request": request,
         "assignment": assignment,
-        "assignment_schema": assignment_to_js_schema(),
+        "assignment_schema": assignment_schema,
         "is_edit": bool(assignment_id),
         "event_type_mapper": event_type_mapper
     })
@@ -82,14 +82,14 @@ async def save_assignment_route(
         updated_assignment: Assignment,
         collection: AsyncIOMotorCollection = Depends(get_collection)
     ):
-    assignment = await get_assignment(assignment_id, collection)
-    if not assignment:
+    assignment_data = await get_assignment(assignment_id, collection)
+    if not assignment_data:
         raise HTTPException(status_code=404, detail="Assignment not found")
 
     updated_assignment.updated_at = dt.datetime.now().isoformat()
     updated_data_dict = updated_assignment.dict(exclude_unset=True)
     await update_assignment(assignment_id, updated_data_dict, collection)
-    return {**assignment, **updated_data_dict}
+    return {**assignment_data, **updated_data_dict}
 
 
 @router.delete("/assignment/{assignment_id}")
@@ -97,8 +97,8 @@ async def delete_assignment_route(
         assignment_id: str,
         collection: AsyncIOMotorCollection = Depends(get_collection)
     ):
-    assignment = await get_assignment(assignment_id, collection)
-    if not assignment:
+    assignment_data = await get_assignment(assignment_id, collection)
+    if not assignment_data:
         raise HTTPException(status_code=404, detail="Assignment not found")
 
     await delete_assignment(assignment_id, collection)
@@ -118,4 +118,3 @@ async def print_page(
         "request": request,
         "assignment_data": assignment_data,
     })
-

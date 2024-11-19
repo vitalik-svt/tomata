@@ -34,6 +34,8 @@ async def list_assignments_route(
 @router.get("/assignment/new")
 async def create_assignment_route(request: Request):
     assignment_data = assignment_default.dict(exclude_unset=True)
+    assignment_data['created_at'] = dt.datetime.now().isoformat()
+    assignment_data['updated_at'] = dt.datetime.now().isoformat()
     return templates.TemplateResponse("edit.html", {
         "request": request,
         "assignment": assignment_data,

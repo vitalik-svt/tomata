@@ -108,7 +108,6 @@
                   "type": "string",
                   "title": "Event Description",
                   "propertyOrder": 100600,
-                  "default": "Событие должно срабатывать при ХХХ.\nПри срабатывании данного события должны передаваться следующие данные:",
                   "format": "xhtml",
                   "options": {
                     "wysiwyg": true

@@ -1,5 +1,5 @@
-name: New Assignment
-author: author@ogurkova_castorama.com
+name: Новое ТЗ
+author: bogdan@ogurkova_castorama.com
 description: |
   ОЧЕНЬ ВАЖНО!!! 
   Все события, особенно GA:pageview должны отрабатывать после загрузки GTM DOM, 
@@ -10,9 +10,4 @@ description: |
   
   При клике на кнопку или ссылку (clickButton, clickProduct, promoClick) - учитывать
   все клики, которые приводят к переходу - левой кнопкой мыши, по колесику мыши.
-  
-  Желтым выделены новые события или параметры, которые еще не внедрены на прод
-  и ожидают внедрения со стороны разработки или пост-ревью со стороны аналитики.
-created_at: "{{ dt.datetime.now().isoformat() }}"
-updated_at: "{{ dt.datetime.now().isoformat() }}"
 actions: []

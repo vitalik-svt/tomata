@@ -7,10 +7,12 @@ from typing_extensions import Annotated
 
 from app.utils import load_json, load_yaml, get_event_type_mapper
 
+# load user configs
+event_type_mapper = get_event_type_mapper("app/configs/events.yaml")
+assignment_default_data = load_yaml("app/configs/default_assignment.yaml", dt=dt)
 
-event_type_mapper = get_event_type_mapper("app/samples/events.yaml")
-assignment_schema = load_json(path="app/samples/schema.json", event_type_mapper=list(event_type_mapper.keys()))
-assignment_default_data = load_yaml("app/samples/default.yaml", dt=dt)
+# load form_schema schema for frontend js generator
+form_schema = load_json(path="app/core/form_schema.json", event_type_mapper=list(event_type_mapper.keys()))
 
 
 class Image(BaseModel):
@@ -20,7 +22,8 @@ class Image(BaseModel):
 
 class Event(BaseModel):
     type: Optional[str]
-    description: Optional[str] = None
+    description: Optional[str] = """Событие должно срабатывать при ХХХ.
+При срабатывании данного события должны передаваться следующие данные:"""
     images: Optional[List[Image]]
     event_data: str
 

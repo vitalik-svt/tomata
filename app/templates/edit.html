@@ -5,11 +5,11 @@
 <div id="editor_holder" class="p-3 border rounded shadow-sm"></div>
 
 <div class="container mt-4 text-center">
-    <!-- Action Buttons (Save, Print, Delete) -->
+    <!-- Action Buttons (Save, View, Delete) -->
     <div class="btn-container-horizontal mt-4 d-flex justify-content-center">
         {% if is_edit %}
             <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment._id }}')">Save Assignment</button>
-            <button class="btn btn-secondary btn-custom mx-2" onclick="printAssignment('{{ assignment._id }}')">Print Assignment</button>
+            <button class="btn btn-secondary btn-custom mx-2" onclick="viewAssignment('{{ assignment._id }}')">View Assignment</button>
             <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment._id }}')">Delete Assignment</button>
         {% else %}
             <button type="button" class="btn btn-success btn-custom mx-2" onclick="createNewAssignment()">Create Assignment</button>
@@ -19,6 +19,7 @@
 
 <!-- Initialize Json Editor -->
 <script>
+
     const schema = {{ form_schema | tojson }};
     const initialData = {{ assignment | tojson }};
     const eventTypeMapper = {{ event_type_mapper | tojson }};
@@ -68,7 +69,5 @@
     });
 
 </script>
-
-<script src="{{ url_for('static', path='js/actions.js') }}"></script>
 
 {% endblock %}

@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     app_workers: int = 1
     app_reload: bool = True
     app_fastapi_middleware_secret_key: str = os.urandom(24)
+    app_user_secret_key: str = os.urandom(24)
+    app_user_algorithm: str = 'HS256'
 
     # mongo
     mongo_server: str = 'mongo'

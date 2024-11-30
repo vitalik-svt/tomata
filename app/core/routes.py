@@ -107,7 +107,7 @@ async def delete_assignment_route(
     return {"message": "Assignment deleted successfully"}
 
 
-@router.get("/assignment/{assignment_id}/print")
+@router.get("/assignment/{assignment_id}/view")
 async def print_page(
         request: Request,
         assignment_id: str,
@@ -116,7 +116,7 @@ async def print_page(
     assignment_data = await get_assignment(assignment_id, collection)
     if not assignment_data:
         raise HTTPException(status_code=404, detail="Assignment not found")
-    return templates.TemplateResponse("print_page.html", {
+    return templates.TemplateResponse("view.html", {
         "request": request,
         "assignment_data": assignment_data,
     })

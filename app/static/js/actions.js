@@ -64,14 +64,13 @@ function deleteAssignment(assignmentId) {
         .catch(error => {
             alert("Error: " + error);
         });
-    }
+    };
 }
 
-
-function printAssignment(assignmentId) {
-    const confirmation = confirm("Last saved version will be printed. Make sure you saved progress!");
+function viewAssignment(assignmentId) {
+    const confirmation = confirm("Last saved version will be viewed. Make sure you saved progress!");
     if (confirmation) {
-        fetch(`/assignment/${assignmentId}/print`, {
+        fetch(`/assignment/${assignmentId}/view`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,15 +78,14 @@ function printAssignment(assignmentId) {
         })
         .then(response => {
             if (response.ok) {
-                window.open(`/assignment/${assignmentId}/print`, '_blank');
+                window.open(`/assignment/${assignmentId}/view`, '_blank');
             } else {
-                alert("Error printing the assignment");
+                alert("Error viewing the assignment");
             }
         })
         .catch(error => {
             alert("Error: " + error);
         });
-    };
+    }
 }
-
 

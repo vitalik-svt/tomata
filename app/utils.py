@@ -3,7 +3,7 @@ import os
 import yaml
 import json
 from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment
 
 
 def render_template(template: Union[dict, str], **template_vars) -> dict:

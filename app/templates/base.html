@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
     <!-- local functions -->
     <script src="{{ url_for('static', path='js/actions.js') }}"></script>
-
 </head>
 
 <body>
@@ -20,8 +19,11 @@
             <a class="navbar-brand" href="/">AMTA</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a href="http://localhost:8071">MongoDB</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a href="#" onclick="logout()">Logout [{{ current_user.username }}]</a>
                     </li>
                 </ul>
             </div>

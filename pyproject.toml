@@ -18,6 +18,9 @@ pydantic-settings = "^2.6.1"
 routers = "^0.10.1"
 motor = "^3.6.0"
 pyyaml = "^6.0.2"
+pyjwt = "^2.10.1"
+passlib = "^1.7.4"
+python-multipart = "^0.0.19"
 
 
 [build-system]

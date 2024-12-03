@@ -12,7 +12,12 @@ event_type_mapper = get_event_type_mapper("app/configs/events.yaml")
 assignment_default_data = load_yaml("app/configs/default_assignment.yaml", dt=dt)
 
 # load form_schema schema for frontend js generator
-form_schema = load_json(path="app/core/form_schema.json", event_type_mapper=list(event_type_mapper.keys()))
+form_schema = load_json(
+    path="app/core/form_schema.json",
+    event_type_mapper=list(event_type_mapper.keys()),
+    event_description="""Событие должно срабатывать при ХХХ.
+При срабатывании данного события должны передаваться следующие данные:"""
+)
 
 
 class Image(BaseModel):
@@ -22,8 +27,7 @@ class Image(BaseModel):
 
 class Event(BaseModel):
     type: Optional[str]
-    description: Optional[str] = """Событие должно срабатывать при ХХХ.
-При срабатывании данного события должны передаваться следующие данные:"""
+    description: Optional[str]
     images: Optional[List[Image]]
     event_data: str
 

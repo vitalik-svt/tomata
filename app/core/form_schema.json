@@ -101,7 +101,7 @@
                 "type": {
                   "type": "string",
                   "title": "Event Type",
-                  "enum": {{ event_type_mapper|tojson }},
+                  "enum": {{ event_type_mapper | tojson }},
                   "propertyOrder": 100500
                 },
                 "description": {
@@ -109,6 +109,7 @@
                   "title": "Event Description",
                   "propertyOrder": 100600,
                   "format": "xhtml",
+                  "default": {{ event_description | tojson }},
                   "options": {
                     "wysiwyg": true
                   }

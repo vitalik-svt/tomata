@@ -89,23 +89,6 @@ function viewAssignment(assignmentId) {
     }
 }
 
-function logout() {
-    sessionStorage.removeItem('username');
-    sessionStorage.removeItem('password');
-
-     localStorage.removeItem('username');
-     localStorage.removeItem('password');
-
-    fetch('/', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Basic ' + btoa('')
-        }
-    }).then(response => {
-        console.log('Logged out');
-    });
-}
-
 function deleteUser(userId) {
         if (confirm("Are you sure you want to delete this user?")) {
             fetch(`/users/delete/${userId}`, {

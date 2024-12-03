@@ -1,9 +1,14 @@
-from typing import Annotated
+from typing import Annotated, Callable, Optional
+from functools import wraps
+import datetime as dt
 import logging
 
+from fastapi.responses import RedirectResponse
 from passlib.context import CryptContext
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi import Depends,  HTTPException, status
+from fastapi import Request, Depends,  HTTPException
+import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
 
 from app.settings import settings
 from app.core.models.user import User, UserInDB, UserCreate, Role, Token, TokenData
@@ -15,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBasic()
+
+SECRET_KEY = settings.app_jwt_secret_key
+ALGORITHM = settings.app_jwt_algorithm
 
 
 def verify_password(plain_password, hashed_password):
@@ -52,6 +60,36 @@ async def get_authenticated_user(credentials: HTTPBasicCredentials = Depends(sec
     return user
 
 
+def create_access_token(data: dict, expires_delta: int = 900):
+    to_encode = data.copy()
+    expire = dt.datetime.now() + dt.timedelta(seconds=expires_delta)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+async def get_current_user(request: Request) -> UserInDB | None:
+    token = request.cookies.get("access_token")
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        user = await get_user(username)
+        if user:
+            return user
+        return None
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+
+async def require_authenticated_user(request: Request, current_user: Optional[UserInDB] = Depends(get_current_user)) -> UserInDB:
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return current_user
+
+
 async def initialize_admin_user():
     """
     Check if any admin user exists in the MongoDB. If not, create one.
@@ -72,3 +110,4 @@ async def initialize_admin_user():
         print("Admin user created successfully.")
     else:
         print("Admin user already exists.")
+

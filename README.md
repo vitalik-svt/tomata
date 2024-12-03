@@ -1,8 +1,8 @@
 # AMTA
 
 AutoMated Technical Assignment tool.<br>
-Lets you create, store and print Technical Assignments in particular format<br>
-Convenient, if all yours assignment are in particular structure, and consists of same elements
+Lets you create, store and print Technical Assignments in particular format.<br>
+Convenient, if all yours assignment are in particular structure, and consists of same elements.
 
 ## User modifications
 
@@ -20,5 +20,9 @@ After any modification, app should be restarted:
 ## Development
 
 1. create `.env` from `.env.template` and set envs
-2. run `docker-compose up` for full load
-3. run `poetry run python script.py` for app only
+2. run `docker-compose up` for full run (with database)
+3. run `poetry run python script.py` for app only (without database)
+
+## Info
+
+Form creation based on: https://github.com/json-editor/json-editor

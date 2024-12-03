@@ -22,9 +22,11 @@
                     <li class="nav-item me-3">
                         <a href="http://localhost:8071">MongoDB</a>
                     </li>
+                    {% if current_user %}
                     <li class="nav-item me-3">
-                        <a href="#" onclick="logout()">Logout [{{ current_user.username }}]</a>
+                        <a href="/logout">Logout [{{ current_user.username }}]</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

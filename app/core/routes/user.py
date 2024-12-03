@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from bson import ObjectId
 
 import app.core.database as db
-from app.core.auth import get_authenticated_user, get_password_hash
+from app.core.auth import get_password_hash, require_authenticated_user
 from app.core.models.user import User, UserCreate, UserInDB, Role
 from app.settings import settings
 
@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/users", response_class=HTMLResponse)
-async def home_route(request: Request, current_user: UserInDB = Depends(get_authenticated_user)):
+async def home_route(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
     return templates.TemplateResponse("users/home.html", {
         "request": request,
         "current_user": current_user
@@ -23,7 +23,7 @@ async def home_route(request: Request, current_user: UserInDB = Depends(get_auth
 
 
 @router.get("/users/add")
-async def get_add_user_page(request: Request, current_user: UserInDB = Depends(get_authenticated_user)):
+async def get_add_user_page(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
     return templates.TemplateResponse("users/add.html", {
         "request": request,
         "current_user": current_user
@@ -35,6 +35,7 @@ async def add_user(
         username: str = Form(...),
         password: str = Form(...),
         role: str = Form(...),
+        current_user: UserInDB = Depends(require_authenticated_user),
         collection=Depends(db.collection_dependency(settings.app_users_collection))
     ):
     try:
@@ -59,7 +60,7 @@ async def add_user(
 async def list_users(
         request: Request,
         collection=Depends(db.collection_dependency(settings.app_users_collection)),
-        current_user: UserInDB = Depends(get_authenticated_user)
+        current_user: UserInDB = Depends(require_authenticated_user)
     ):
     users = []
     async for user in collection.find():
@@ -76,7 +77,7 @@ async def list_users(
 async def delete_user(
         user_id: str,
         collection=Depends(db.collection_dependency(settings.app_users_collection)),
-        current_user: UserInDB = Depends(get_authenticated_user)
+        current_user: UserInDB = Depends(require_authenticated_user)
     ):
     result = await collection.delete_one({"_id": ObjectId(user_id)})
     if result.deleted_count == 0:

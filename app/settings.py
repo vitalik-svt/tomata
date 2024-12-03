@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     app_workers: int = 1
     app_reload: bool = True
     app_fastapi_middleware_secret_key: str = os.urandom(24)
+    app_jwt_secret_key: str = os.urandom(24)
+    app_jwt_algorithm: str = "HS256"
+    app_jwt_token_sec: int = 86400
+
     app_assignments_collection: str = 'assignments'
     app_users_collection: str = 'users'
     app_init_admin_username: str = 'admin'

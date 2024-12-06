@@ -1,10 +1,11 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from base64 import b64encode
 
 
 class Settings(BaseSettings):
 
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file='.env', env_prefix='AMTA_')
 
     # settings
     env: str = 'LOCAL'
@@ -15,8 +16,8 @@ class Settings(BaseSettings):
     app_port: int = 8000
     app_workers: int = 1
     app_reload: bool = True
-    app_fastapi_middleware_secret_key: str = os.urandom(24)
-    app_jwt_secret_key: str = os.urandom(24)
+    app_fastapi_middleware_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')
+    app_jwt_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')
     app_jwt_algorithm: str = "HS256"
     app_jwt_token_sec: int = 86400
 

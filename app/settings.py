@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     me_config_basicauth_password: str = 'mexpress'
     me_config_http_port: int = 8071
 
+    @property
+    def get_mongo_uri(self):
+        return f"mongodb://{self.mongo_initdb_root_username}:{self.mongo_initdb_root_password}@{self.mongo_server}:{self.mongo_port}/{self.mongo_initdb_database}?authSource=admin"
+
 
 settings = Settings()
 

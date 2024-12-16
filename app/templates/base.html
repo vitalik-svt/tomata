@@ -19,10 +19,10 @@
             <a class="navbar-brand" href="/">AMTA</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
+                    {% if current_user %}
                     <li class="nav-item me-3">
                         <a href="http://localhost:8071">MongoDB</a>
                     </li>
-                    {% if current_user %}
                     <li class="nav-item me-3">
                         <a href="/logout">Logout [{{ current_user.username }}]</a>
                     </li>

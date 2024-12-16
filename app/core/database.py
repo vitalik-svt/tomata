@@ -4,11 +4,8 @@ from bson import ObjectId
 from app.settings import settings
 
 
-MONGO_URI = f"mongodb://{settings.mongo_initdb_root_username}:{settings.mongo_initdb_root_password}@{settings.mongo_server}:{settings.mongo_port}/{settings.mongo_initdb_database}?authSource=admin"
-
-
-async def get_db(db_name: str = settings.mongo_initdb_database) -> AsyncIOMotorClient:
-    client = AsyncIOMotorClient(MONGO_URI)
+async def get_db(db_name: str = settings.mongo_initdb_database, uri: str = settings.get_mongo_uri) -> AsyncIOMotorClient:
+    client = AsyncIOMotorClient(uri)
     return client[db_name]
 
 

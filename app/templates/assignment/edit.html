@@ -41,31 +41,16 @@
         use_name_attributes: true,
     });
 
-    // loop over types of events, and update events_data
-    const pattern = /^root\.actions\.\d+\.events\.\d+\.type$/
-    editor.on('change', function() {
-        Object.keys(editor.editors).forEach(key => {
-            if (editor.editors[key] && key !== 'root') {
-                const fieldPath = key; // This is the path (e.g., root.actions[0].events[0].type)
-                const newValue = editor.editors[key].getValue(); // Get the new value
-                // Check if the path matches root.actions.*.events.*.type
-                if (fieldPath.match(pattern)) {
-                    console.log(`Field with path: [${fieldPath}] changed to [${JSON.stringify(newValue)}]`);
-                    const updatedPath = fieldPath.replace(/\.type$/, '.event_data');
-                    const name = editor.getEditor(updatedPath);
-                    name.setValue(eventTypeMapper[newValue])
-                }
-            }
-        });
+    let previousEventTypeValueStorage = {}
+
+    editor.on("ready", () => {
+        // getFromLocalStorage(editor);
+        previousEventTypeValueStorage = collectEventPathsAndValues(editor);
+        expandTextareas("editor_holder");
     });
 
-    // make all text areas expanded to text size
-    editor.on('ready', function() {
-        const textareas = document.querySelectorAll("#editor_holder textarea");
-        textareas.forEach((textarea) => {
-            textarea.style.height = "auto"; // Reset height
-            textarea.style.height = textarea.scrollHeight + "px"; // Adjust height
-        });
+    editor.on("change", () => {
+        сhangeEventDataAsEventType(editor, eventTypeMapper, previousEventTypeValueStorage);
     });
 
 </script>

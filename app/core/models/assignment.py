@@ -26,7 +26,7 @@ class Image(BaseModel):
 
 
 class Event(BaseModel):
-    type: Optional[str]
+    event_type: Optional[str]
     description: Optional[str]
     images: Optional[List[Image]]
     event_data: str
@@ -34,9 +34,9 @@ class Event(BaseModel):
     @model_validator(mode="before")
     def set_default_event_data(cls, values):
         """Set data based on type by default"""
-        event_type = values.get("type")
-        if event_type:
-            values.setdefault("event_data", event_type_mapper[event_type])
+        event_type_ = values.get("event_type")
+        if event_type_:
+            values.setdefault("event_data", event_type_mapper[event_type_])
         return values
 
 

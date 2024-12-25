@@ -98,7 +98,7 @@
                     }
                   }
                 },
-                "type": {
+                "event_type": {
                   "type": "string",
                   "title": "Event Type",
                   "enum": {{ event_type_mapper | tojson }},

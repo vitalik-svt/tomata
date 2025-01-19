@@ -122,6 +122,21 @@
                   "options": {
                     "wysiwyg": true
                   }
+                },
+                "event_internals": {
+                  "type": "string",
+                  "title": "Event Internals (Date, Task#, Comment)",
+                  "propertyOrder": 100800,
+                  "format": "xhtml",
+                  "options": {
+                    "wysiwyg": true
+                  }
+                },
+                "event_ready": {
+                  "type": "boolean",
+                  "title": "Event ready",
+                  "propertyOrder": 100900,
+                  "format": "checkbox"
                 }
               }
             }

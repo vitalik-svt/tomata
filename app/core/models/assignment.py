@@ -30,6 +30,8 @@ class Event(BaseModel):
     description: Optional[str]
     images: Optional[List[Image]]
     event_data: str
+    event_internals: str
+    event_ready: bool
 
     @model_validator(mode="before")
     def set_default_event_data(cls, values):

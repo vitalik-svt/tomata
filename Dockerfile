@@ -8,6 +8,6 @@ COPY ./app ./
 WORKDIR /usr/src/
 
 COPY poetry.lock pyproject.toml ./
-RUN poetry config virtualenvs.create false && poetry install
+RUN poetry config virtualenvs.create false && poetry install --no-root
 
 CMD ["python3", "-m", "app"]

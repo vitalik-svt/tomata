@@ -1,63 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-        }
-        .container {
-            width: 90%;
-            margin: 0 auto;
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .image-description {
-            font-style: italic;
-            color: #555;
-        }
-        .container-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .left-column,
-        .right-column {
-            width: 50%;
-        }
-        .section-top {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            height: 250px; /* Set a fixed height for the top part */
-        }
-        h2 {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        .event-images {
-            display: flex;
-            flex-direction: column; /* Stack images vertically */
-            gap: 10px;
-        }
-        .event-images img {
-            width: 100%; /* Make image width 100% of its container */
-            max-width: 30%; /* Limit the image width to 80% of the screen */
-            height: auto; /* Maintain aspect ratio */
-            display: block; /* Ensure images stack vertically */
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block title %}
+<title>View</title>
+{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+    }
+    .container-main {
+        width: 80%;
+        margin: 0 auto;
+    }
+    .section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .image-description {
+        font-style: italic;
+        color: #555;
+    }
+    .container-top {
+        width: 100%;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .left-column,
+    .right-column {
+        width: 50%;
+    }
+    .section-top {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        height: 250px; /* Set a fixed height for the top part */
+    }
+    h2 {
+        font-size: 1.2em;
+        margin-bottom: 5px;
+    }
+    .event-images {
+        display: flex;
+        flex-direction: column; /* Stack images vertically */
+        gap: 10px;
+    }
+    .event-images img {
+        width: 100%; /* Make image width 100% of its container */
+        max-width: 30%; /* Limit the image width to 80% of the screen */
+        height: auto; /* Maintain aspect ratio */
+        display: block; /* Ensure images stack vertically */
+    }
+    .foldable-header {
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        color: black; /* Black text */
+    }
+    .foldable-header span {
+        margin-right: 10px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .foldable-header p {
+        margin: 0;
+    }
+    .foldable-content {
+        display: none; /* Initially hidden */
+        margin-top: 10px;
+    }
+    .event-ready {
+        background-color: rgba(144, 238, 144, 0.5); /* Light transparent green */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-main">
 
         <div class="container-top">
             <div class="left-column">
@@ -95,30 +122,47 @@
                 <!-- Render events for each action -->
                 {% if action.events %}
                     {% for event in action.events %}
-                        <div class="section">
-                            <p>Event {{ loop.index }} for Action {{ outer_loop.index }}: </p>
-                            <h4>{{ event.event_type }}</h4>
+                        <div class="section {% if event.event_ready %}event-ready{% endif %}">
+                             <div class="foldable-header" onclick="toggleContent(event)">
+                                <span class="toggle-icon">+</span>
+                                <p>Action {{ outer_loop.index }}. Event {{ loop.index }}: {{ event.event_type }}</p>
+                            </div>
                             <!-- Event images -->
-                            {% if event.images %}
-                                <div class="event-images">
-                                    {% for image in event.images %}
-                                        <img src="{{ image.file }}">
-                                        {% if image.description %}
-                                            <p class="image-description">{{ image.description }}</p>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <p>{{ event.description | replace("\n", "<br>") | safe }}</p>
-                            <p>{{ event.event_data | replace("\n", "<br>") | safe}}</p>
+                            <div class="foldable-content">
+                                {% if event.images %}
+                                    <div class="event-images">
+                                        {% for image in event.images %}
+                                            <img src="{{ image.file }}">
+                                            {% if image.description %}
+                                                <p class="image-description">{{ image.description }}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <p>{{ event.description | replace("\n", "<br>") | safe }}</p>
+                                <p>{{ event.event_data | replace("\n", "<br>") | safe}}</p>
+                            </div>
                         </div>
                     {% endfor %}
                 {% endif %}
             </div>
         {% endfor %}
     </div>
-</body>
 
-<!--<script> window.print() </script>-->
+<script>
+    // Toggle foldable content visibility
+    function toggleContent(event) {
+        const header = event.currentTarget;
+        const content = header.nextElementSibling;
+        const icon = header.querySelector(".toggle-icon");
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+            icon.textContent = "−"; // Change to minus
+        } else {
+            content.style.display = "none";
+            icon.textContent = "+"; // Change to plus
+        }
+    }
+</script>
 
-</html>
+{% endblock %}

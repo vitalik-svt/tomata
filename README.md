@@ -1,6 +1,6 @@
-# AMTA
+# TOMATA
 
-AutoMated Technical Assignment tool.<br>
+Automated technical assignment tool.<br>
 Lets you create, store and print Technical Assignments in particular format.<br>
 Convenient, if all yours assignment are in particular structure, and consists of same elements.
 

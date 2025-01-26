@@ -22,7 +22,7 @@ services:
 
   mongo:
     image: mongo
-    container_name: ${MONGO_SERVER}
+    container_name: ${AMTA_MONGO_SERVER}
     restart: always
     environment:
       - MONGO_PORT=${AMTA_MONGO_PORT}

@@ -56,7 +56,7 @@ function deleteAssignment(assignmentId) {
         .then(response => {
             if (response.ok) {
                 alert("Assignment deleted successfully");
-                window.location.href = "/assignment/list";  // Redirect to assignments list page
+                window.location.href = "/assignment/list";  // Redirect to assignment list page
             } else {
                 alert("Error deleting the assignment");
             }
@@ -91,7 +91,7 @@ function viewAssignment(assignmentId) {
 
 function deleteUser(userId) {
         if (confirm("Are you sure you want to delete this user?")) {
-            fetch(`/users/delete/${userId}`, {
+            fetch(`/user/delete/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

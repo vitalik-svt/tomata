@@ -10,4 +10,4 @@ description: |
   
   При клике на кнопку или ссылку (clickButton, clickProduct, promoClick) - учитывать
   все клики, которые приводят к переходу - левой кнопкой мыши, по колесику мыши.
-actions: []
+blocks: []

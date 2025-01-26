@@ -7,7 +7,7 @@ function collectEventPathsAndValues(editor) {
     Object.keys(editor.editors).forEach((eventTypePath) => {
         const eventTypeEditor = editor.getEditor(eventTypePath);
 
-        if (eventTypePath.match(/^root\.actions\.\d+\.events\.\d+\.event_type$/)) {
+        if (eventTypePath.match(/^root\.blocks\.\d+\.events\.\d+\.event_type$/)) {
             const eventTypeValue = eventTypeEditor.getValue();
 
             const eventDataPath = eventTypePath.replace(/\.event_type$/, ".event_data");
@@ -27,7 +27,7 @@ function collectEventPathsAndValues(editor) {
 // Достать начальные данные из localStorage
 //function getFromLocalStorage(editor) {
 //    Object.keys(editor.editors).forEach((eventTypePath) => {
-//        if (eventTypePath.match(/^root\.actions\.\d+\.events\.\d+\.event_type$/)) {
+//        if (eventTypePath.match(/^root\.blocks\.\d+\.events\.\d+\.event_type$/)) {
 //            const savedEventTypeValue = localStorage.getItem(eventTypePath);
 //            if (savedEventTypeValue) {
 //                editor.getEditor(eventTypePath).setValue(savedEventTypeValue);
@@ -46,7 +46,7 @@ function collectEventPathsAndValues(editor) {
 function сhangeEventDataAsEventType(editor, eventTypeMapper, previousEventTypeValueStorage) {
     Object.keys(editor.editors).forEach((eventTypePath) => {
         // Listen only changes of eventType Fields
-        if (eventTypePath.match(/^root\.actions\.\d+\.events\.\d+\.event_type$/)) {
+        if (eventTypePath.match(/^root\.blocks\.\d+\.events\.\d+\.event_type$/)) {
             const eventDataPath = eventTypePath.replace(/\.event_type$/, ".event_data");
 
             const prevEventTypeValue = previousEventTypeValueStorage[eventTypePath];

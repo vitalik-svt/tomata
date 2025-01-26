@@ -112,23 +112,23 @@
             <p>{{ assignment_data.description | replace("\n", "<br>") | safe }}</p>
         </div>
 
-        <!-- Actions and Events -->
-        {% for action in assignment_data.actions %}
+        <!-- Blocks and Events -->
+        {% for block in assignment_data.blocks %}
             {% set outer_loop = loop %}
             <div class="section">
-                <h3>Action {{ loop.index }}: {{ action.name }}</h3>
-                <p>{{ action.description | replace("\n", "<br>") | safe }}</p>
+                <h3>{{ block.name }}</h3>
+                <p>{{ block.description | replace("\n", "<br>") | safe }}</p>
 
-                <!-- Render events for each action -->
-                {% if action.events %}
-                    {% for event in action.events %}
+                <!-- Render events for each block -->
+                {% if block.events %}
+                    {% for event in block.events %}
                         <div class="section {% if event.event_ready %}event-ready{% endif %}">
                              <div class="foldable-header" onclick="toggleContent(event)">
                                 <span class="toggle-icon">+</span>
-                                <p>Action {{ outer_loop.index }}. Event {{ loop.index }}: {{ event.event_type }}</p>
+                                <p>{{ event.name }}</p>
                             </div>
-                            <!-- Event images -->
                             <div class="foldable-content">
+
                                 {% if event.images %}
                                     <div class="event-images">
                                         {% for image in event.images %}
@@ -139,8 +139,29 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
+
                                 <p>{{ event.description | replace("\n", "<br>") | safe }}</p>
+                                <p><b>{{ event.event_type }}</b></p>
                                 <p>{{ event.event_data | replace("\n", "<br>") | safe}}</p>
+                                {% if event.check_comment or event.check_images%}
+                                    <div class="foldable-header" onclick="toggleContent(event)">
+                                        <span class="toggle-icon">+</span>
+                                        <p>Check info</p>
+                                    </div>
+                                    <div class="foldable-content">
+                                        <p>{{ event.check_comment | replace("\n", "<br>") | safe}}</p>
+                                        {% if event.check_images %}
+                                            <div class="event-images">
+                                                {% for image in event.check_images %}
+                                                    <img src="{{ image.file }}">
+                                                    {% if image.description %}
+                                                        <p class="image-description">{{ image.description }}</p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

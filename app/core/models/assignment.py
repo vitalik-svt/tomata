@@ -26,11 +26,14 @@ class Image(BaseModel):
 
 
 class Event(BaseModel):
+    name: str
     event_type: Optional[str]
     description: Optional[str]
     images: Optional[List[Image]]
     event_data: str
-    event_internals: str
+    check_comment: str
+    check_images: Optional[List[Image]]
+    internal_comment: str
     event_ready: bool
 
     @model_validator(mode="before")
@@ -42,7 +45,7 @@ class Event(BaseModel):
         return values
 
 
-class Action(BaseModel):
+class Block(BaseModel):
     name: str
     description: Optional[str] = None
     events: List[Event] = Field(default_factory=list)
@@ -65,7 +68,7 @@ class Assignment(BaseModel):
     description: Optional[str] = None
     created_at: str = Field(default=dt.datetime.now().isoformat())
     updated_at: str = Field(default=dt.datetime.now().isoformat())
-    actions: List[Action] = Field(default_factory=Action)
+    blocks: List[Block] = Field(default_factory=Block)
 
 
 assignment_default = Assignment(**assignment_default_data)

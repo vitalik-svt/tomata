@@ -9,28 +9,29 @@ from app.core.models.user import User, UserCreate, UserInDB, Role
 from app.settings import settings
 
 
-router = APIRouter()
+prefix = 'user'
+router = APIRouter(prefix=f'/{prefix}')
 templates = Jinja2Templates(directory="app/templates")
 
 
 
-@router.get("/users", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def home_route(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
-    return templates.TemplateResponse("users/home.html", {
+    return templates.TemplateResponse(f"{prefix}/home.html", {
         "request": request,
         "current_user": current_user
     })
 
 
-@router.get("/users/add")
+@router.get("/add")
 async def get_add_user_page(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
-    return templates.TemplateResponse("users/add.html", {
+    return templates.TemplateResponse(f"{prefix}/add.html", {
         "request": request,
         "current_user": current_user
     })
 
 
-@router.post("/users/add")
+@router.post("/add")
 async def add_user(
         username: str = Form(...),
         password: str = Form(...),
@@ -53,10 +54,10 @@ async def add_user(
         user_id = str(result['_id'])
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating user: {e}")
-    return RedirectResponse(url="/users/list", status_code=303)
+    return RedirectResponse(url=f"/{prefix}/list", status_code=303)
 
 
-@router.get("/users/list")
+@router.get("/list")
 async def list_users(
         request: Request,
         collection=Depends(db.collection_dependency(settings.app_users_collection)),
@@ -66,14 +67,14 @@ async def list_users(
     async for user in collection.find():
         user["_id"] = str(user["_id"])  # Convert ObjectId to string
         users.append(user)
-    return templates.TemplateResponse("users/list.html", {
+    return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,
         "current_user": current_user,
         "users": users
     })
 
 
-@router.post("/users/delete/{user_id}")
+@router.post("/delete/{user_id}")
 async def delete_user(
         user_id: str,
         collection=Depends(db.collection_dependency(settings.app_users_collection)),

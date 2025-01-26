@@ -11,11 +11,13 @@
     "name": {
       "title": "Assignment Name",
       "type": "string",
+      "minLength": 1,
       "propertyOrder": 100010
     },
     "author": {
       "title": "Author Email",
       "type": "string",
+      "minLength": 1,
       "propertyOrder": 100020
     },
     "created_at": {
@@ -36,22 +38,23 @@
       "propertyOrder": 100050,
       "format": "markdown"
     },
-    "actions": {
-      "title": "Actions",
+    "blocks": {
+      "title": "Blocks",
       "type": "array",
       "propertyOrder": 100060,
       "items": {
         "type": "object",
-        "title": "Action",
+        "title": "Block",
         "properties": {
           "name": {
             "type": "string",
-            "title": "Action name",
+            "minLength": 1,
+            "title": "Block name",
             "propertyOrder": 100100
           },
           "description": {
             "type": "string",
-            "title": "Action description",
+            "title": "Block description",
             "propertyOrder": 100200,
             "format": "xhtml",
             "options": {
@@ -60,12 +63,18 @@
           },
           "events": {
             "type": "array",
-            "title": "Action events",
+            "title": "Block events",
             "propertyOrder": 100300,
             "items": {
               "type": "object",
               "title": "Event",
               "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "title": "Event name",
+                  "propertyOrder": 100350
+                },
                 "images": {
                   "type": "array",
                   "format": "table",
@@ -123,10 +132,50 @@
                     "wysiwyg": true
                   }
                 },
-                "event_internals": {
+                "check_comment": {
                   "type": "string",
-                  "title": "Event Internals (Date, Task#, Comment)",
+                  "title": "Check comment",
                   "propertyOrder": 100800,
+                  "format": "xhtml",
+                  "options": {
+                    "wysiwyg": true
+                  }
+                },"check_images": {
+                  "type": "array",
+                  "format": "table",
+                  "propertyOrder": 100900,
+                  "title": "Check Images",
+                  "items": {
+                    "type": "object",
+                    "title": "Image",
+                    "format": "grid",
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "title": "File",
+                        "media": {
+                          "binaryEncoding": "base64",
+                          "type": "img/png"
+                        },
+                        "options": {
+                          "grid_columns": 6,
+                          "multiple": true
+                        }
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description",
+                        "options": {
+                          "grid_columns": 6
+                        }
+                      }
+                    }
+                  }
+                },
+                "internal_comment": {
+                  "type": "string",
+                  "title": "Internal comment",
+                  "propertyOrder": 101000,
                   "format": "xhtml",
                   "options": {
                     "wysiwyg": true
@@ -135,7 +184,7 @@
                 "event_ready": {
                   "type": "boolean",
                   "title": "Event ready",
-                  "propertyOrder": 100900,
+                  "propertyOrder": 101100,
                   "format": "checkbox"
                 }
               }

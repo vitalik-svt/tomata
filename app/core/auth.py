@@ -75,6 +75,7 @@ async def get_current_user(request: Request) -> UserInDB | None:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         user = await get_user(username)
+
         if user:
             return user
         return None

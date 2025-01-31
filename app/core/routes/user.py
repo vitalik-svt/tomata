@@ -5,7 +5,7 @@ from bson import ObjectId
 
 import app.core.database as db
 from app.core.auth import get_password_hash, require_authenticated_user
-from app.core.models.user import User, UserCreate, UserInDB, Role
+from app.core.models.user import User, UserInDB, Role
 from app.settings import settings
 
 
@@ -27,33 +27,34 @@ async def home_route(request: Request, current_user: UserInDB = Depends(require_
 async def get_add_user_page(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
     return templates.TemplateResponse(f"{prefix}/add.html", {
         "request": request,
-        "current_user": current_user
+        "current_user": current_user,
+        "roles": [role.value for role in Role]
     })
 
 
 @router.post("/add")
 async def add_user(
+        request: Request,
         username: str = Form(...),
         password: str = Form(...),
         role: str = Form(...),
         current_user: UserInDB = Depends(require_authenticated_user),
         collection=Depends(db.collection_dependency(settings.app_users_collection))
     ):
-    try:
-        existing_user = await db.get_obj_by_field('username', username, collection)
-        if existing_user:
-            raise HTTPException(status_code=400, detail=f"User with username {username} already exists")
 
-        role_enum = Role(role)
-        new_user = UserInDB(
-            username=username,
-            hashed_password=get_password_hash(password),
-            role=role_enum.value
-        )
-        result = await db.create_obj(new_user.model_dump(), collection)
-        user_id = str(result['_id'])
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error creating user: {e}")
+    existing_user = await db.get_obj_by_fields({'username': username}, collection)
+    if existing_user:
+        raise HTTPException(status_code=400, detail=f"User with username {username} already exists")
+
+    role_enum = Role(role)
+    new_user = User(
+        username=username,
+        hashed_password=get_password_hash(password),
+        role=role_enum.value,
+        active=True  # create active user by default
+    )
+    await db.create_obj(new_user.model_dump(), collection)
+
     return RedirectResponse(url=f"/{prefix}/list", status_code=303)
 
 
@@ -64,8 +65,8 @@ async def list_users(
         current_user: UserInDB = Depends(require_authenticated_user)
     ):
     users = []
-    async for user in collection.find():
-        user["_id"] = str(user["_id"])  # Convert ObjectId to string
+    async for user_data in collection.find():
+        user = UserInDB(**user_data)
         users.append(user)
     return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,

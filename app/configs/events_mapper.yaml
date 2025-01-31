@@ -230,3 +230,16 @@ GA:clickCategory:
   - key: categoryUrl
     value: /category/building-materials/
     comment: URL категории
+
+pupa:
+  - key: sdf
+    value: sdfsdf
+
+lupa:
+  - key: sdf
+    value: sdfsdf
+
+kupa:
+  - key: sdf
+    value: sdfsdf
+

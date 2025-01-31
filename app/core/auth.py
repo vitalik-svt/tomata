@@ -11,7 +11,7 @@ import jwt
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 from app.settings import settings
-from app.core.models.user import User, UserInDB, UserCreate, Role, Token, TokenData
+from app.core.models.user import User, UserInDB, Role, Token, TokenData
 import app.core.database as db
 
 
@@ -35,7 +35,7 @@ def get_password_hash(password):
 
 async def get_user(username: str) -> UserInDB | None:
     collection = await db.get_collection(collection_name=settings.app_users_collection)
-    user_data = await db.get_obj_by_field('username', username, collection)
+    user_data = await db.get_obj_by_fields({'username': username}, collection)
     if user_data:
         return UserInDB(**user_data)
     else:
@@ -76,7 +76,7 @@ async def get_current_user(request: Request) -> UserInDB | None:
         username: str = payload.get("sub")
         user = await get_user(username)
 
-        if user:
+        if user and user.active:
             return user
         return None
     except jwt.ExpiredSignatureError:
@@ -100,7 +100,7 @@ async def initialize_admin_user():
         collection_name=settings.app_users_collection,
     )
 
-    existing_admin = await db.get_obj_by_field("role", Role.admin.value, collection)
+    existing_admin = await db.get_obj_by_fields({"role": Role.admin.value}, collection)
     if not existing_admin:
         admin = UserInDB(
             username=settings.app_init_admin_username,

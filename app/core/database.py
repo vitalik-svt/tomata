@@ -1,10 +1,11 @@
-from typing import Any
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
+from typing import Any, Union, List
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection, AsyncIOMotorDatabase
 from bson import ObjectId
 from app.settings import settings
 
 
-async def get_db(db_name: str = settings.mongo_initdb_database, uri: str = settings.get_mongo_uri) -> AsyncIOMotorClient:
+
+async def get_db(db_name: str = settings.mongo_initdb_database, uri: str = settings.get_mongo_uri) -> AsyncIOMotorDatabase:
     client = AsyncIOMotorClient(uri)
     return client[db_name]
 
@@ -30,11 +31,13 @@ async def get_obj_by_id(obj_id: str, collection: AsyncIOMotorCollection):
     return obj
 
 
-async def get_obj_by_field(field_name: str, field_value, collection: AsyncIOMotorCollection):
-    query = {field_name: ObjectId(field_value) if field_name == "_id" else field_value}
+async def get_obj_by_fields(query: dict, collection: AsyncIOMotorCollection) -> dict:
+    if "_id" in query and isinstance(query["_id"], str):
+        query["_id"] = ObjectId(query["_id"])
+
     obj = await collection.find_one(query)
     if obj:
-        obj["_id"] = str(obj["_id"])  # Convert ObjectId to string
+        obj["_id"] = str(obj["_id"])
     return obj
 
 
@@ -61,3 +64,21 @@ async def delete_obj(obj_id: str, collection: AsyncIOMotorCollection):
     if result.deleted_count > 0:
         return {"message": f"Object {obj_id} deleted successfully"}
     return {"error": "Object not found"}
+
+
+async def latest_group_assignment(group_id: str, collection: AsyncIOMotorCollection) -> tuple:
+    pipeline = [
+        {"$match": {"group_id": group_id}},     # Фильтруем по group_id
+        {"$sort": {"version": -1}},             # Сортируем по version в убывающем порядке
+        {"$limit": 1},                          # Берем только первый результат после сортировки
+    ]
+    result = await collection.aggregate(pipeline).to_list(length=1)
+
+    if result:
+        # Return a tuple with assignment_id (_id) and max_version
+        return result[0]["_id"], result[0]["version"]
+    else:
+        return None, 0
+
+
+

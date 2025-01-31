@@ -22,6 +22,11 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 
+@router.get("/error")
+async def home_route(request: Request):
+    raise Exception('test exception')
+
+
 @router.get("/", response_class=HTMLResponse)
 async def home_route(request: Request, current_user: UserInDB = Depends(get_current_user)):
     if not current_user:
@@ -52,4 +57,9 @@ async def token_route(request: Request, form_data: OAuth2PasswordRequestForm = D
     response = RedirectResponse("/", status_code=302)  # redirect to home
     response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=settings.app_jwt_token_sec)
     return response
+
+
+@router.get("/fork_modal")
+async def get_modal(request: Request):
+    return templates.TemplateResponse("assignment/fork_modal.html", {"request": request})
 

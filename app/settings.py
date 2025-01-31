@@ -18,11 +18,15 @@ class Settings(BaseSettings):
     app_reload: bool = True
     app_fastapi_middleware_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')
     app_jwt_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')
-    app_jwt_algorithm: str = "HS256"
+    app_jwt_algorithm: str = 'HS256'
     app_jwt_token_sec: int = 86400
 
     app_assignments_collection: str = 'assignments'
     app_users_collection: str = 'users'
+
+    app_config_assignment_schema_path: str = 'app/configs/assignment_schema.json'
+    app_config_events_mapper_path: str = 'app/configs/events_mapper.yaml'
+
     app_init_admin_username: str = 'admin'
     app_init_admin_password: str = 'admin'
 

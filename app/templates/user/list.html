@@ -23,7 +23,7 @@
                 <td>
                     {% if users|length > 1 %}
                     <div class="btn-group d-flex" style="width: 100%">
-                        <button onclick="deleteUser('{{ user._id }}')" class="btn btn-danger btn-sm flex-fill">Delete</button>
+                        <button onclick="deleteUser('{{ user.id }}')" class="btn btn-danger btn-sm flex-fill">Delete</button>
                     </div>
                     {% endif %}
                 </td>

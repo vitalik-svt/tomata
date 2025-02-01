@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-<title>Assignment view</title>
+    {% if group_view %}
+        <title>Assignment latest view</title>
+    {% else %}
+        <title>Assignment view</title>
+    {% endif %}
 {% endblock %}
 
 {% block styles %}

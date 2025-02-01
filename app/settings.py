@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     app_assignments_collection: str = 'assignments'
     app_users_collection: str = 'users'
 
-    app_config_assignment_schema_path: str = 'app/configs/assignment_schema.json'
     app_config_events_mapper_path: str = 'app/configs/events_mapper.yaml'
 
     app_init_admin_username: str = 'admin'
@@ -35,7 +34,7 @@ class Settings(BaseSettings):
     mongo_port: int = 27017
     mongo_initdb_root_username: str = 'admin'
     mongo_initdb_root_password: str = 'admin'
-    mongo_initdb_database: str = 'amta'
+    mongo_initdb_database: str = 'tomata'
     mongodb_data_dir: str = './data/db'
     mongodb_log_dir: str = './log/mongodb'
 

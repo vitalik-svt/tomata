@@ -43,7 +43,7 @@ def load_yaml(path: str, **template_vars) -> Any:
 def get_model_size(data: pydantic.BaseModel | dict | Any) -> float:
 
     """
-    :return: weight in bytes
+    :return: size in Mbytes
     """
 
     if isinstance(data, pydantic.BaseModel):
@@ -54,4 +54,3 @@ def get_model_size(data: pydantic.BaseModel | dict | Any) -> float:
         pass
 
     return round(sys.getsizeof(data) / (1024 ** 2), 2)
-

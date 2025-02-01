@@ -1,4 +1,10 @@
 function viewGroupAssignment(groupId) {
+
+    if (!groupId) {
+        alert("Error: groupId is required!");
+        return;
+    }
+
     fetch(`/assignment/group/${groupId}/view`, {
         method: 'GET',
         headers: {
@@ -19,6 +25,12 @@ function viewGroupAssignment(groupId) {
 
 
 function deleteGroup(groupId) {
+
+    if (!groupId) {
+        alert("Error: groupId is required!");
+        return;
+    }
+
     const confirmation = confirm("Are you sure you want to delete all this group with all its assignments?");
     if (confirmation) {
         fetch(`/assignment/group/${groupId}`, {

@@ -24,7 +24,7 @@
                 <i><small>{{ group_id }}</small></i>
             </div>
             <div class="btn-group d-flex">
-                <button class="btn btn-secondary btn-sm" type="button" onclick="viewGroupAssignment('{{ group_id }}')">View Last Version</button>
+                <button class="btn btn-secondary btn-sm" type="button" onclick="viewGroupAssignment('{{ group_id }}')">View Latest Version</button>
                 {% if current_user %}
                 <button class="btn btn-danger btn-sm" type="button" onclick="deleteGroup('{{ group_id }}')">Delete group</button>
                 {% endif %}
@@ -44,6 +44,7 @@
                         <th>Author</th>
                         <th>Created At</th>
                         <th>Updated At</th>
+                        <th>Size</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -58,6 +59,7 @@
                         <td>{{ assignment.author }}</td>
                         <td>{{ assignment.created_at }}</td>
                         <td>{{ assignment.updated_at }}</td>
+                        <td>{{ assignment.size }}</td>
                         <td>
                             <div class="btn-group d-flex">
                                 <a href="/assignment/{{ assignment.id }}" class="btn btn-success btn-sm flex-fill">Edit</a>
@@ -74,6 +76,8 @@
         {% endif %}
     </div>
     {% endfor %}
+    <br>
+    <br>
 </div>
 
 {% endblock %}

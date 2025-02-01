@@ -1,6 +1,6 @@
 from typing import Annotated
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from pydantic.functional_validators import BeforeValidator
 
 
@@ -28,5 +28,17 @@ class User(BaseModel):
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
+
 class UserInDB(User):
-    id: PyObjectId = Field(..., alias="_id")  # mongo id
+
+    model_config = ConfigDict(
+        populate_by_name=True,  # to have "private" data like "_id"
+    )
+
+    id: PyObjectId = Field(..., validation_alias='_id', serialization_alias='id')
+
+    def model_dump(self, use_mongo_id: bool = True, **kwargs):
+        if use_mongo_id:
+            return super().model_dump(by_alias=True, **kwargs)
+        else:
+            return super().model_dump(by_alias=False, **kwargs)

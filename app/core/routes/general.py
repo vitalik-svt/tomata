@@ -1,18 +1,15 @@
 from typing import Optional
 import logging
-import sys
-import datetime as dt
-import jwt
 
-from app.core.auth import create_access_token, SECRET_KEY, ALGORITHM
+from app.core.services.auth import create_access_token
 
-from fastapi import Depends, Request, HTTPException
+from fastapi import Depends, Request
 from fastapi.routing import APIRouter
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.templating import Jinja2Templates
 
-from app.core.auth import authenticate_user, get_current_user
+from app.core.services.auth import authenticate_user, get_current_user
 from app.core.models.user import UserInDB
 from app.settings import settings
 

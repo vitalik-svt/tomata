@@ -1,5 +1,10 @@
 function saveExistingAssignment(assignmentId) {
-    // Получаем данные из JSON Editor
+
+    if (!assignmentId) {
+        alert("Error: assignmentId is required!");
+        return;
+    }
+
     const data = editor.getValue();
 
     fetch(`/assignment/${assignmentId}`, {
@@ -22,14 +27,12 @@ function saveExistingAssignment(assignmentId) {
 
 
 function createNewAssignment() {
-    const data = editor.getValue();
 
     fetch(`/assignment/new`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
     })
     .then(response => {
         if (response.ok) {
@@ -47,6 +50,12 @@ function createNewAssignment() {
 
 
 function createNewVersion(assignmentId) {
+
+    if (!assignmentId) {
+        alert("Error: assignmentId is required!");
+        return;
+    }
+
     fetch(`/fork_modal`)  // Загружаем HTML модального окна
         .then(response => response.text())
         .then(html => {
@@ -95,6 +104,12 @@ function closeModal() {
 
 
 function deleteAssignment(assignmentId) {
+
+    if (!assignmentId) {
+        alert("Error: assignmentId is required!");
+        return;
+    }
+
     const confirmation = confirm("Are you sure you want to delete this assignment?");
     if (confirmation) {
         fetch(`/assignment/${assignmentId}`, {
@@ -119,6 +134,12 @@ function deleteAssignment(assignmentId) {
 
 
 function viewAssignment(assignmentId) {
+
+    if (!assignmentId) {
+        alert("Error: assignmentId is required!");
+        return;
+    }
+
     const confirmation = confirm("Last saved version will be viewed. Make sure you saved progress!");
     if (confirmation) {
         fetch(`/assignment/${assignmentId}/view`, {

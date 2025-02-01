@@ -1,4 +1,4 @@
-from typing import Any, Union, List
+import pydantic
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection, AsyncIOMotorDatabase
 from bson import ObjectId
 from app.settings import settings
@@ -41,21 +41,27 @@ async def get_obj_by_fields(query: dict, collection: AsyncIOMotorCollection) -> 
     return obj
 
 
-async def create_obj(obj_data: dict, collection: AsyncIOMotorCollection):
-    result = await collection.insert_one(obj_data)
+async def create_obj(obj: dict | pydantic.BaseModel, collection: AsyncIOMotorCollection):
+    if isinstance(obj, pydantic.BaseModel):
+        obj = obj.model_dump()
+
+    result = await collection.insert_one(obj)
     obj_id = str(result.inserted_id)
     obj = await collection.find_one({"_id": ObjectId(obj_id)})
     return obj
 
 
-async def update_obj(obj_id: str, obj_data: dict, collection: AsyncIOMotorCollection):
+async def update_obj(obj_id: str, obj: dict | pydantic.BaseModel, collection: AsyncIOMotorCollection):
+    if isinstance(obj, pydantic.BaseModel):
+        obj = obj.model_dump()
+
     result = await collection.update_one(
         {"_id": ObjectId(obj_id)},
-        {"$set": obj_data}
+        {"$set": obj}
     )
     if result.matched_count > 0:
-        obj_data["_id"] = obj_id
-        return obj_data
+        obj["_id"] = obj_id
+        return obj
     return None
 
 
@@ -79,6 +85,4 @@ async def latest_group_assignment(group_id: str, collection: AsyncIOMotorCollect
         return result[0]["_id"], result[0]["version"]
     else:
         return None, 0
-
-
 

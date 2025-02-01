@@ -14,14 +14,10 @@
     <div class="container mt-4 text-center">
         <!-- Action Buttons (Save, View, Delete) -->
         <div class="btn-container-horizontal mt-4 d-flex justify-content-center">
-            {% if is_edit %}
-                <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment.id }}')">Save Assignment</button>
-                <button type="button" class="btn btn-primary btn-custom mx-2" onclick="createNewVersion('{{ assignment.id }}')">Fork new version</button>
-                <button class="btn btn-secondary btn-custom mx-2" onclick="viewAssignment('{{ assignment.id }}')">View Assignment</button>
-                <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment.id }}')">Delete Assignment</button>
-            {% else %}
-                <button type="button" class="btn btn-success btn-custom mx-2" onclick="createNewAssignment()">Create Assignment</button>
-            {% endif %}
+            <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment.id }}')">Save Assignment</button>
+            <button type="button" class="btn btn-primary btn-custom mx-2" onclick="createNewVersion('{{ assignment.id }}')">Fork new version</button>
+            <button class="btn btn-secondary btn-custom mx-2" onclick="viewAssignment('{{ assignment.id }}')">View Assignment</button>
+            <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment.id }}')">Delete Assignment</button>
         </div>
     </div>
 </div>
@@ -29,9 +25,11 @@
 <!-- Initialize Json Editor -->
 <script>
 
-    const schema = {{ assignment_schema | tojson }};
+    const schema = {{ assignment_ui_schema | tojson }};
     const initialData = {{ assignment | tojson }};
     const eventsMapper = {{ events_mapper | tojson }};
+
+    // console.log(schema);
 
     const element = document.getElementById('editor_holder');
 
@@ -42,6 +40,7 @@
         iconlib: 'bootstrap',
         compact: true,
         disable_collapse: false,
+        switcher: true,
         disable_edit_json: true,
         disable_properties: true,
         layout: "normal",

@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.core.routes import core_router
 from app.settings import settings
-from app.core.auth import initialize_admin_user
+from app.core.services.auth import initialize_admin_user
 
 PROJECT_NAME = 'AMTA'
 

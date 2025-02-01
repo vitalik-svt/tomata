@@ -1,18 +1,15 @@
-from typing import Annotated, Callable, Optional
-from functools import wraps
+from typing import Optional
 import datetime as dt
 import logging
 
-from fastapi.responses import RedirectResponse
 from passlib.context import CryptContext
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi import Request, Depends,  HTTPException
 import jwt
-from jwt import ExpiredSignatureError, InvalidTokenError
 
 from app.settings import settings
-from app.core.models.user import User, UserInDB, Role, Token, TokenData
-import app.core.database as db
+from app.core.models.user import User, UserInDB, Role
+import app.core.services.database as db
 
 
 logger = logging.getLogger(__name__)
@@ -102,7 +99,7 @@ async def initialize_admin_user():
 
     existing_admin = await db.get_obj_by_fields({"role": Role.admin.value}, collection)
     if not existing_admin:
-        admin = UserInDB(
+        admin = User(
             username=settings.app_init_admin_username,
             hashed_password=get_password_hash(settings.app_init_admin_password),
             role=Role.admin.value

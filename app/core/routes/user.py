@@ -3,8 +3,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from bson import ObjectId
 
-import app.core.database as db
-from app.core.auth import get_password_hash, require_authenticated_user
+import app.core.services.database as db
+from app.core.services.auth import get_password_hash, require_authenticated_user
 from app.core.models.user import User, UserInDB, Role
 from app.settings import settings
 

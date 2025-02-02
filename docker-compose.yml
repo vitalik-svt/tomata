@@ -64,6 +64,7 @@ services:
   minio:
     image: minio/minio:RELEASE.2025-01-20T14-49-07Z
     container_name: ${TOMATA_S3_SERVER}
+    restart: always
     command: server /data --console-address ":9001"
     ports:
       - "${TOMATA_S3_PORT}:9000"

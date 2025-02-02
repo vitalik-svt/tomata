@@ -115,6 +115,7 @@ class Image(CustomBaseModel):
         json_schema_extra={"title": "location", "type": "string", "readonly": True}
     )
 
+    # TODO
     # @model_validator(mode='before')
     # def replace(self) -> Self:
     #     if self.file and not self.location:

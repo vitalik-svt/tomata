@@ -24,26 +24,8 @@ function collectEventPathsAndValues(editor) {
 }
 
 
-// Достать начальные данные из localStorage
-//function getFromLocalStorage(editor) {
-//    Object.keys(editor.editors).forEach((eventTypePath) => {
-//        if (eventTypePath.match(/^root\.blocks\.\d+\.events\.\d+\.event_type$/)) {
-//            const savedEventTypeValue = localStorage.getItem(eventTypePath);
-//            if (savedEventTypeValue) {
-//                editor.getEditor(eventTypePath).setValue(savedEventTypeValue);
-//            }
-//            const eventDataPath = eventTypePath.replace(/\.event_type$/, ".event_data");
-//            const savedEventDataValue = localStorage.getItem(eventDataPath);
-//            if (savedEventDataValue) {
-//                editor.getEditor(eventDataPath).setValue(savedEventDataValue);
-//            }
-//        }
-//    });
-//}
-
-
 // Функция для обработки изменений в редакторе
-function сhangeEventDataAsEventType(editor, eventTypeMapper, previousEventTypeValueStorage) {
+function сhangeEventDataAsEventType(editor, eventsMapper, previousEventTypeValueStorage) {
     Object.keys(editor.editors).forEach((eventTypePath) => {
         // Listen only changes of eventType Fields
         if (eventTypePath.match(/^root\.blocks\.\d+\.events\.\d+\.event_type$/)) {
@@ -64,11 +46,7 @@ function сhangeEventDataAsEventType(editor, eventTypeMapper, previousEventTypeV
 
             // Меняем EventData только если пользователь руками изменил EventType. Меняем всегда на дефолт
             if (prevEventTypeValue != newEventTypeValue) {
-                editor.getEditor(eventDataPath).setValue(eventTypeMapper[newEventTypeValue]);
-
-                // Save new values to localStorage, to not lost them while reload page
-                // localStorage.setItem(eventTypePath, newEventTypeValue);
-                // localStorage.setItem(eventDataPath, newEventDataValue);
+                editor.getEditor(eventDataPath).setValue(eventsMapper[newEventTypeValue]);
 
                 previousEventTypeValueStorage[eventTypePath] = newEventTypeValue;
                 previousEventTypeValueStorage[eventDataPath] = newEventDataValue;

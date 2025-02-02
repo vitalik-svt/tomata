@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-<title>Assignment view</title>
+    {% if group_view %}
+        <title>Assignment latest view</title>
+    {% else %}
+        <title>Assignment view</title>
+    {% endif %}
 {% endblock %}
 
 {% block styles %}
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        font-size: 10px;
-    }
     .container-main {
         width: 80%;
         margin: 0 auto;
@@ -40,7 +40,7 @@
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
-        height: 250px; /* Set a fixed height for the top part */
+        height: 370px; /* Set a fixed height for the top part */
     }
     h2 {
         font-size: 1.2em;
@@ -90,30 +90,38 @@
             <div class="left-column">
                 <div class="section-top">
                     <h2>Assignment Name</h2>
-                    <p>{{ assignment_data.name }}</p>
+                    <p>{{ assignment.name }}</p>
                     <h2>Author Email</h2>
-                    <p>{{ assignment_data.author }}</p>
+                    <p>{{ assignment.author }}</p>
+                    <h2>Version</h2>
+                    <p>{{ assignment.version }}</p>
+                    <h2>Status</h2>
+                    <p>{{ assignment.status }}</p>
+                    <h2>Issue number</h2>
+                    <p>{{ assignment.issue }}</p>
                 </div>
             </div>
             <div class="right-column">
                 <div class="section-top">
-                    <h2>Created At</h2>
-                    <p>{{ assignment_data.created_at }}</p>
-                    <h2>Updated At</h2>
-                    <p>{{ assignment_data.updated_at }}</p>
+                    <h2>Group ID</h2>
+                    <p>{{ assignment.group_id }}</p>
                     <h2>Assignment ID</h2>
-                    <p>{{ assignment_data._id }}</p>
+                    <p>{{ assignment.id }}</p>
+                    <h2>Created At</h2>
+                    <p>{{ assignment.created_at }}</p>
+                    <h2>Updated At</h2>
+                    <p>{{ assignment.updated_at }}</p>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <h2>Description</h2>
-            <p>{{ assignment_data.description | replace("\n", "<br>") | safe }}</p>
+            <p>{{ assignment.description | replace("\n", "<br>") | safe }}</p>
         </div>
 
         <!-- Blocks and Events -->
-        {% for block in assignment_data.blocks %}
+        {% for block in assignment.blocks %}
             {% set outer_loop = loop %}
             <div class="section">
                 <h3>{{ block.name }}</h3>

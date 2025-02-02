@@ -1,5 +1,8 @@
-from typing import Union
+from typing import Union, Any
 import os
+import sys
+
+import pydantic
 import yaml
 import json
 from pathlib import Path
@@ -29,7 +32,7 @@ def load_json(path, **template_vars) -> dict:
         return render_template(template_str, **template_vars)
 
 
-def load_yaml(path: str, **template_vars) -> dict:
+def load_yaml(path: str, **template_vars) -> Any:
     if os.path.exists(path) and Path(path).suffix in ('.yaml', 'yml'):
         with open(path, 'r') as f:
             template = yaml.safe_load(f)
@@ -37,16 +40,17 @@ def load_yaml(path: str, **template_vars) -> dict:
         return render
 
 
-def get_event_type_mapper(path) -> dict:
-    event_type_mapper = {}
-    event_type_mapper_raw = load_yaml(path).items()
-    for event, params in event_type_mapper_raw:
-        event_params = []
-        for param in params:
-            row = f"""'{param.get('key')}': '{param.get('value')}' {f'// {param.get('comment')}' if param.get('comment') else ''}"""
-            event_params.append(row)
-        event_type_mapper[event] = '\n'.join(event_params)
+def get_model_size(data: pydantic.BaseModel | dict | Any) -> float:
 
-    return event_type_mapper
+    """
+    :return: size in Mbytes
+    """
 
+    if isinstance(data, pydantic.BaseModel):
+        data = json.dumps(data.model_dump())
+    elif isinstance(data, dict):
+        data = json.dumps(data)
+    else:
+        pass
 
+    return round(sys.getsizeof(data) / (1024 ** 2), 2)

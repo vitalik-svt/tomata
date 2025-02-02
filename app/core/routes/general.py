@@ -1,18 +1,15 @@
 from typing import Optional
 import logging
-import sys
-import datetime as dt
-import jwt
 
-from app.core.auth import create_access_token, SECRET_KEY, ALGORITHM
+from app.core.services.auth import create_access_token
 
-from fastapi import Depends, Request, HTTPException
+from fastapi import Depends, Request
 from fastapi.routing import APIRouter
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.templating import Jinja2Templates
 
-from app.core.auth import authenticate_user, get_current_user
+from app.core.services.auth import authenticate_user, get_current_user
 from app.core.models.user import UserInDB
 from app.settings import settings
 
@@ -20,6 +17,11 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+
+@router.get("/error")
+async def home_route(request: Request):
+    raise Exception('test exception')
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -52,4 +54,9 @@ async def token_route(request: Request, form_data: OAuth2PasswordRequestForm = D
     response = RedirectResponse("/", status_code=302)  # redirect to home
     response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=settings.app_jwt_token_sec)
     return response
+
+
+@router.get("/fork_modal")
+async def get_modal(request: Request):
+    return templates.TemplateResponse("assignment/fork_modal.html", {"request": request})
 

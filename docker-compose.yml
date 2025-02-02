@@ -12,27 +12,28 @@ services:
     container_name: app
     restart: always
     ports:
-      - "${AMTA_APP_PORT}:${AMTA_APP_PORT}"
+      - "${TOMATA_APP_PORT}:${TOMATA_APP_PORT}"
     volumes:
       - ./app:/usr/src/app
     depends_on:
       - mongo
+      - minio
     networks:
       - backend
 
   mongo:
-    image: mongo
-    container_name: ${AMTA_MONGO_SERVER}
+    image: mongo:8.0.4
+    container_name: ${TOMATA_MONGO_SERVER}
     restart: always
     environment:
-      - MONGO_PORT=${AMTA_MONGO_PORT}
-      - MONGO_INITDB_ROOT_USERNAME=${AMTA_MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${AMTA_MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_INITDB_DATABASE=${AMTA_MONGO_INITDB_DATABASE}
-      - MONGODB_DATA_DIR=${AMTA_MONGODB_DATA_DIR}
-      - MONGODB_LOG_DIR=${AMTA_MONGODB_LOG_DIR}
+      MONGO_PORT: ${TOMATA_MONGO_PORT}
+      MONGO_INITDB_ROOT_USERNAME: ${TOMATA_MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TOMATA_MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${TOMATA_MONGO_INITDB_DATABASE}
+      MONGODB_DATA_DIR: ${TOMATA_MONGODB_DATA_DIR}
+      MONGODB_LOG_DIR: ${TOMATA_MONGODB_LOG_DIR}
     volumes:
-      - ./data/db:/data/db
+      - ./data/mongo:/data/db
     healthcheck:
       test: [ "CMD", "mongo", "--eval", "db.runCommand('ping')" ]
       interval: 10s
@@ -43,20 +44,35 @@ services:
       - backend
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:1.0.2
     container_name: mongo-express
     restart: always
     environment:
-      - ME_CONFIG_MONGODB_SERVER=${AMTA_MONGO_SERVER}  # same as mongo container name
-      - ME_CONFIG_MONGODB_PORT=${AMTA_MONGO_PORT}
-      - ME_CONFIG_MONGODB_AUTH_USERNAME=${AMTA_MONGO_INITDB_ROOT_USERNAME}
-      - ME_CONFIG_MONGODB_AUTH_PASSWORD=${AMTA_MONGO_INITDB_ROOT_PASSWORD}
-      - ME_CONFIG_BASICAUTH_USERNAME=${AMTA_ME_CONFIG_BASICAUTH_USERNAME}
-      - ME_CONFIG_BASICAUTH_PASSWORD=${AMTA_ME_CONFIG_BASICAUTH_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: ${TOMATA_MONGO_SERVER}  # same as mongo container name
+      ME_CONFIG_MONGODB_PORT: ${TOMATA_MONGO_PORT}
+      ME_CONFIG_MONGODB_AUTH_USERNAME: ${TOMATA_MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${TOMATA_MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${TOMATA_ME_CONFIG_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${TOMATA_ME_CONFIG_BASICAUTH_PASSWORD}
     depends_on:
       - mongo
     ports:
-      - "${AMTA_ME_CONFIG_HTTP_PORT}:8081"
+      - "${TOMATA_ME_CONFIG_HTTP_PORT}:8081"
+    networks:
+      - backend
+
+  minio:
+    image: minio/minio:RELEASE.2025-01-20T14-49-07Z
+    container_name: ${TOMATA_S3_SERVER}
+    command: server /data --console-address ":9001"
+    ports:
+      - "${TOMATA_S3_PORT}:9000"
+      - "${TOMATA_MINIO_UI_PORT}:9001"
+    environment:
+      MINIO_ROOT_USER: ${TOMATA_S3_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${TOMATA_S3_SECRET_ACCESS_KEY}
+    volumes:
+      - ./data/minio:/data
     networks:
       - backend
 

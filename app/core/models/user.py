@@ -1,5 +1,7 @@
-from pydantic import BaseModel
+from typing import Annotated
 from enum import Enum
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic.functional_validators import BeforeValidator
 
 
 class Token(BaseModel):
@@ -13,18 +15,30 @@ class TokenData(BaseModel):
 
 class Role(Enum):
     admin: str = 'admin'
+    editor: str = 'editor'
+    viewer: str = 'viewer'
 
 
 class User(BaseModel):
     username: str
+    hashed_password: str
     role: str = Role.admin.value
+    active: bool = True
+
+
+PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
 class UserInDB(User):
-    hashed_password: str
 
+    model_config = ConfigDict(
+        populate_by_name=True,  # to have "private" data like "_id"
+    )
 
-class UserCreate(BaseModel):
-    username: str
-    password: str
-    role: Role
+    id: PyObjectId = Field(..., validation_alias='_id', serialization_alias='id')
+
+    def model_dump(self, use_mongo_id: bool = True, **kwargs):
+        if use_mongo_id:
+            return super().model_dump(by_alias=True, **kwargs)
+        else:
+            return super().model_dump(by_alias=False, **kwargs)

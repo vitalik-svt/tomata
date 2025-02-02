@@ -7,20 +7,17 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container mt-4" style="max-width: 60%;">
     <!-- JSON Editor Holder -->
     <div id="editor_holder" class="p-3 border rounded shadow-sm"></div>
 
     <div class="container mt-4 text-center">
         <!-- Action Buttons (Save, View, Delete) -->
         <div class="btn-container-horizontal mt-4 d-flex justify-content-center">
-            {% if is_edit %}
-                <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment._id }}')">Save Assignment</button>
-                <button class="btn btn-secondary btn-custom mx-2" onclick="viewAssignment('{{ assignment._id }}')">View Assignment</button>
-                <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment._id }}')">Delete Assignment</button>
-            {% else %}
-                <button type="button" class="btn btn-success btn-custom mx-2" onclick="createNewAssignment()">Create Assignment</button>
-            {% endif %}
+            <button type="button" class="btn btn-success btn-custom mx-2" onclick="saveExistingAssignment('{{ assignment.id }}')">Save Assignment</button>
+            <button type="button" class="btn btn-primary btn-custom mx-2" onclick="createNewVersion('{{ assignment.id }}')">Fork new version</button>
+            <button class="btn btn-secondary btn-custom mx-2" onclick="viewAssignment('{{ assignment.id }}')">View Assignment</button>
+            <button class="btn btn-danger btn-custom mx-2" onclick="deleteAssignment('{{ assignment.id }}')">Delete Assignment</button>
         </div>
     </div>
 </div>
@@ -28,9 +25,11 @@
 <!-- Initialize Json Editor -->
 <script>
 
-    const schema = {{ form_schema | tojson }};
+    const schema = {{ assignment_ui_schema | tojson }};
     const initialData = {{ assignment | tojson }};
-    const eventTypeMapper = {{ event_type_mapper | tojson }};
+    const eventsMapper = {{ events_mapper | tojson }};
+
+    // console.log(schema);
 
     const element = document.getElementById('editor_holder');
 
@@ -41,6 +40,7 @@
         iconlib: 'bootstrap',
         compact: true,
         disable_collapse: false,
+        switcher: true,
         disable_edit_json: true,
         disable_properties: true,
         layout: "normal",
@@ -58,7 +58,7 @@
     });
 
     editor.on("change", () => {
-        сhangeEventDataAsEventType(editor, eventTypeMapper, previousEventTypeValueStorage);
+        сhangeEventDataAsEventType(editor, eventsMapper, previousEventTypeValueStorage);
     });
 
 </script>

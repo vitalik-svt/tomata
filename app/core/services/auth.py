@@ -1,18 +1,15 @@
-from typing import Annotated, Callable, Optional
-from functools import wraps
+from typing import Optional
 import datetime as dt
 import logging
 
-from fastapi.responses import RedirectResponse
 from passlib.context import CryptContext
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi import Request, Depends,  HTTPException
 import jwt
-from jwt import ExpiredSignatureError, InvalidTokenError
 
 from app.settings import settings
-from app.core.models.user import User, UserInDB, UserCreate, Role, Token, TokenData
-import app.core.database as db
+from app.core.models.user import User, UserInDB, Role
+import app.core.services.database as db
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +32,7 @@ def get_password_hash(password):
 
 async def get_user(username: str) -> UserInDB | None:
     collection = await db.get_collection(collection_name=settings.app_users_collection)
-    user_data = await db.get_obj_by_field('username', username, collection)
+    user_data = await db.get_obj_by_fields({'username': username}, collection)
     if user_data:
         return UserInDB(**user_data)
     else:
@@ -76,7 +73,7 @@ async def get_current_user(request: Request) -> UserInDB | None:
         username: str = payload.get("sub")
         user = await get_user(username)
 
-        if user:
+        if user and user.active:
             return user
         return None
     except jwt.ExpiredSignatureError:
@@ -91,7 +88,11 @@ async def require_authenticated_user(request: Request, current_user: Optional[Us
     return current_user
 
 
-async def initialize_admin_user():
+async def initialize_user(
+        username:str = settings.app_init_admin_username,
+        password:str = settings.app_init_admin_password,
+        role:str = Role.admin.value
+):
     """
     Check if any admin user exists in the MongoDB. If not, create one.
     """
@@ -100,15 +101,11 @@ async def initialize_admin_user():
         collection_name=settings.app_users_collection,
     )
 
-    existing_admin = await db.get_obj_by_field("role", Role.admin.value, collection)
+    existing_admin = await db.get_obj_by_fields({"role": Role.admin.value}, collection)
     if not existing_admin:
-        admin = UserInDB(
-            username=settings.app_init_admin_username,
-            hashed_password=get_password_hash(settings.app_init_admin_password),
-            role=Role.admin.value
-        )
+        admin = User(username=username, hashed_password=get_password_hash(password), role=role)
         await db.create_obj(admin.model_dump(), collection)
-        print("Admin user created successfully.")
+        logger.info("Admin user created successfully.")
     else:
-        print("Admin user already exists.")
+        logger.info("At least one admin user already exists.")
 

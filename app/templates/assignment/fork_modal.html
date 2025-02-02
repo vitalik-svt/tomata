@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-group label {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        #confirmationModal .bg-white {
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="confirmationModal" class="d-flex justify-content-center align-items-center"
+     style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);">
+
+    <div class="bg-white p-5 rounded-3" style="max-width: 600px; text-align: center;">
+        <div class="form-group">
+          <h5>New version will be created from last save of parent Assignment</h5>
+        </div>
+
+        <div class="form-group">
+            <label for="useNewSchema">Choose Schema</label><br/><br/>
+            <div>
+                <input type="radio" id="useCurrentSchema" name="schema" value="false" checked>
+                <label for="useCurrentSchema">Use parent assignment schema</label>
+            </div>
+            <div>
+                <input type="radio" id="useNewSchema" name="schema" value="true" data-bs-toggle="tooltip" title="If schema changed dramatically, it may break new version!">
+                <label for="useNewSchema">Apply newest available schema</label>
+            </div>
+        </div>
+
+        <button class="btn btn-primary me-3" onclick="confirmNewVersion()">Confirm</button>
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

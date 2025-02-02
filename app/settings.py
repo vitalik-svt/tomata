@@ -5,7 +5,7 @@ from base64 import b64encode
 
 class Settings(BaseSettings):
 
-    model_config = SettingsConfigDict(env_file='.env', env_prefix='AMTA_')
+    model_config = SettingsConfigDict(env_file='.env', env_prefix='TOMATA_')
 
     # settings
     env: str = 'LOCAL'
@@ -43,9 +43,21 @@ class Settings(BaseSettings):
     me_config_basicauth_password: str = 'mexpress'
     me_config_http_port: int = 8071
 
+    # minio
+    s3_server: str = 'minio'
+    s3_port: int = 9000
+    minio_ui_port: int = 9001
+    s3_access_key_id: str = 'minio'
+    s3_secret_access_key: str = 'minio123'
+    s3_images_bucket: str = 'images'
+
     @property
-    def get_mongo_uri(self):
+    def mongo_uri(self):
         return f"mongodb://{self.mongo_initdb_root_username}:{self.mongo_initdb_root_password}@{self.mongo_server}:{self.mongo_port}/{self.mongo_initdb_database}?authSource=admin"
+
+    @property
+    def s3_endpoint(self):
+        return f'http://{self.s3_server}:{self.s3_port}'
 
 
 settings = Settings()

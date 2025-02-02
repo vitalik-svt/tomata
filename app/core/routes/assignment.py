@@ -68,7 +68,7 @@ async def get_assignment_route(
         current_user: UserInDB = Depends(require_authenticated_user)
     ):
     assignment_ui_schema, _ = await get_actual_schema_data(assignment_class_name)
-    return PlainTextResponse(content=assignment_ui_schema, media_type="application/json")
+    return PlainTextResponse(content=f"{assignment_class_name} schema:{'\n'*3}{assignment_ui_schema}", media_type="application/json")
 
 
 # n.b! That func should be placed in code above get/{assignment_id}, because assignment_id is str also
@@ -123,10 +123,9 @@ async def get_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    try:
-        assignment_data = await db.get_obj_by_id(assignment_id, collection)
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=f'Got error fetching data from mongo: {e}')
+    assignment_data = await db.get_obj_by_id(assignment_id, collection)
+    if not assignment_data:
+        raise HTTPException(status_code=404, detail="Assignment not found")
 
     assignment_full = AssignmentInDB(**assignment_data)
 
@@ -134,8 +133,11 @@ async def get_assignment_route(
     assignment_ui_schema = json.loads(assignment_full.assignment_ui_schema)
     events_mapper = json.loads(assignment_full.events_mapper)
 
-    # and recreate model for UI (without schema ans
+    # and recreate model for UI (without schema and event_mapper for ui)
     assignment = AssignmentInUI(**assignment_full.model_dump(use_mongo_id=False))
+
+    # TODO
+    # assignment.locations_to_images()
 
     if not assignment_data:
         raise HTTPException(status_code=404, detail="Assignment not found")
@@ -143,7 +145,7 @@ async def get_assignment_route(
     return templates.TemplateResponse(f"{prefix}/edit.html", {
         "request": request,
         "current_user": current_user,
-        "assignment": assignment.model_dump(),
+        "assignment": assignment.model_dump(use_mongo_id=False),
         "assignment_ui_schema": assignment_ui_schema,
         "events_mapper": events_mapper
     })
@@ -157,11 +159,10 @@ async def save_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    try:
-        assignment_data = await db.get_obj_by_id(assignment_id, collection)
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=f'Got error fetching data from mongo: {e}')
+    # TODO
+    # assignment_update.images_to_locations
 
+    assignment_data = await db.get_obj_by_id(assignment_id, collection)
     if not assignment_data:
         raise HTTPException(status_code=404, detail="Assignment not found")
 
@@ -243,10 +244,14 @@ async def delete_assignment_route(
 async def view_assignment_route(
         request: Request,
         assignment_id: str,
-        current_user: UserInDB = Depends(get_current_user),  # we let any user see that
+        # we don't want to let any user see that, because they can be confused. only latest version availiable with group endpoint
+        current_user: UserInDB = Depends(require_authenticated_user),
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
     assignment_data = await db.get_obj_by_id(assignment_id, collection)
+    if not assignment_data:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+
     assignment = AssignmentInDB(**assignment_data)
 
     if not assignment_data:

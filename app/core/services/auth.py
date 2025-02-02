@@ -88,7 +88,11 @@ async def require_authenticated_user(request: Request, current_user: Optional[Us
     return current_user
 
 
-async def initialize_admin_user():
+async def initialize_user(
+        username:str = settings.app_init_admin_username,
+        password:str = settings.app_init_admin_password,
+        role:str = Role.admin.value
+):
     """
     Check if any admin user exists in the MongoDB. If not, create one.
     """
@@ -99,13 +103,9 @@ async def initialize_admin_user():
 
     existing_admin = await db.get_obj_by_fields({"role": Role.admin.value}, collection)
     if not existing_admin:
-        admin = User(
-            username=settings.app_init_admin_username,
-            hashed_password=get_password_hash(settings.app_init_admin_password),
-            role=Role.admin.value
-        )
+        admin = User(username=username, hashed_password=get_password_hash(password), role=role)
         await db.create_obj(admin.model_dump(), collection)
-        print("Admin user created successfully.")
+        logger.info("Admin user created successfully.")
     else:
-        print("Admin user already exists.")
+        logger.info("At least one admin user already exists.")
 

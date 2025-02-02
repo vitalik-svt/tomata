@@ -1,10 +1,11 @@
+from typing_extensions import Self
 from typing import List, Dict, Union, Literal, Collection, Tuple, Any
 import yaml
 import json
 import jsonref
 from typing_extensions import Annotated
 import datetime as dt
-from pydantic import ConfigDict, BaseModel, Field, AliasChoices
+from pydantic import ConfigDict, BaseModel, Field, AliasChoices, model_validator
 from pydantic.functional_validators import BeforeValidator
 from pydantic.json_schema import SkipJsonSchema
 from enum import Enum
@@ -50,18 +51,18 @@ class CustomBaseModel(BaseModel):
             for key, value in data_to_update.items():
                 field.json_schema_extra[key] = value
 
-    @staticmethod
-    def _remove_keys_recursively(d: dict | list, drop_keys: Collection) -> dict | list:
+    @classmethod
+    def _remove_keys_recursively(cls, d: dict | list, drop_keys: Collection) -> dict | list:
 
         if isinstance(d, dict):
             return {
-                k: CustomBaseModel._remove_keys_recursively(v, drop_keys)
+                k: cls._remove_keys_recursively(v, drop_keys)
                 for k, v in d.items()
                 if k not in drop_keys
             }
         elif isinstance(d, list):
             return [
-                CustomBaseModel._remove_keys_recursively(v, drop_keys) for v in d
+                cls._remove_keys_recursively(v, drop_keys) for v in d
             ]
         return d
 
@@ -90,7 +91,6 @@ class Status(Enum):
     discussion = 'Discussion'
     works_on_dev = 'Works on dev'
     works_on_prod = 'Works on prod'
-    # test = 'Test'
 
 
 class Image(CustomBaseModel):
@@ -100,14 +100,32 @@ class Image(CustomBaseModel):
     )
 
     file: Union[str, SkipJsonSchema[None]] = Field(
-        json_schema_extra={"title": "File", "type": "string",
-                           "media": {"binaryEncoding": "base64", "type": "img/png"},
-                           "options": {"grid_columns": 6, "multiple": True}
+        json_schema_extra={
+            "title": "File",
+            "type": "string",
+            "media": {"binaryEncoding": "base64", "type": "img/png"},
+            "options": {"grid_columns": 6, "multiple": True},
+            "format": "url"
         }
     )
     description: Union[str, SkipJsonSchema[None]] = Field(
         json_schema_extra={"title": "Description", "type": "string", "options": {"grid_columns": 6}}
     )
+    location: Union[str, SkipJsonSchema[None]] = Field(
+        json_schema_extra={"title": "location", "type": "string", "readonly": True}
+    )
+
+    # @model_validator(mode='before')
+    # def replace(self) -> Self:
+    #     if self.file and not self.location:
+    #         """
+    #         when loads from UI to Location doesn't exists (it can't be set by user, it's readonly)
+    #         """
+    #         ...
+    #     elif self.location and not self.file:
+    #         ...
+    #     return self
+
 
 
 class Event(CustomBaseModel):
@@ -269,6 +287,7 @@ class AssignmentID(CustomBaseModel):
         json_schema_extra={"title": "Assignment ID", "type": "float", "readonly": True, "propertyOrder": 10001}
     )
 
+    # overwriting standard method, careful!
     def model_dump(self, use_mongo_id: bool = True, **kwargs):
         if use_mongo_id:
             return super().model_dump(by_alias=True, **kwargs)

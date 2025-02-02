@@ -5,7 +5,7 @@ from app.settings import settings
 
 
 
-async def get_db(db_name: str = settings.mongo_initdb_database, uri: str = settings.get_mongo_uri) -> AsyncIOMotorDatabase:
+async def get_db(db_name: str = settings.mongo_initdb_database, uri: str = settings.mongo_uri) -> AsyncIOMotorDatabase:
     client = AsyncIOMotorClient(uri)
     return client[db_name]
 
@@ -19,6 +19,7 @@ async def get_collection(
 
 
 def collection_dependency(collection_name: str, db_name: str = settings.mongo_initdb_database):
+    """dependency just in case"""
     async def _get_collection():
         return await get_collection(db_name=db_name, collection_name=collection_name)
     return _get_collection

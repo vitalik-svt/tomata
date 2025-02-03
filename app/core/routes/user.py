@@ -14,7 +14,6 @@ router = APIRouter(prefix=f'/{prefix}')
 templates = Jinja2Templates(directory="app/templates")
 
 
-
 @router.get("/", response_class=HTMLResponse)
 async def home_route(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
     return templates.TemplateResponse(f"{prefix}/home.html", {
@@ -24,7 +23,7 @@ async def home_route(request: Request, current_user: UserInDB = Depends(require_
 
 
 @router.get("/add")
-async def get_add_user_page(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
+async def add_user_route(request: Request, current_user: UserInDB = Depends(require_authenticated_user)):
     return templates.TemplateResponse(f"{prefix}/add.html", {
         "request": request,
         "current_user": current_user,
@@ -33,7 +32,7 @@ async def get_add_user_page(request: Request, current_user: UserInDB = Depends(r
 
 
 @router.post("/add")
-async def add_user(
+async def add_user_route(
         request: Request,
         username: str = Form(...),
         password: str = Form(...),
@@ -42,20 +41,17 @@ async def add_user(
         collection=Depends(db.collection_dependency(settings.app_users_collection))
     ):
 
-    existing_user = await db.get_obj_by_fields({'username': username}, collection)
-    if existing_user:
-        raise HTTPException(status_code=400, detail=f"User with username {username} already exists")
+    username_exists = await db.get_obj_by_fields({'username': username}, collection)
+    if username_exists:
+        raise HTTPException(status_code=400, detail=f"User {username} already exists")
 
-    role_enum = Role(role)
-    new_user = User(
-        username=username,
-        hashed_password=get_password_hash(password),
-        role=role_enum.value,
-        active=True  # create active user by default
-    )
-    await db.create_obj(new_user.model_dump(), collection)
+    user = User(username=username, hashed_password=get_password_hash(password), role=Role(role).value, active=True)
 
-    return RedirectResponse(url=f"/{prefix}/list", status_code=303)
+    try:
+        await db.create_obj(user, collection)
+        return RedirectResponse(url=f"/{prefix}/list", status_code=303)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating user: {e}")
 
 
 @router.get("/list")
@@ -64,13 +60,11 @@ async def list_users(
         collection=Depends(db.collection_dependency(settings.app_users_collection)),
         current_user: UserInDB = Depends(require_authenticated_user)
     ):
-    users = []
-    async for user_data in collection.find():
-        user = UserInDB(**user_data)
-        users.append(user)
+
+    users = [UserInDB(**user_data) async for user_data in collection.find()]
+
     return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,
-        "current_user": current_user,
         "users": users
     })
 
@@ -81,7 +75,10 @@ async def delete_user(
         collection=Depends(db.collection_dependency(settings.app_users_collection)),
         current_user: UserInDB = Depends(require_authenticated_user)
     ):
-    result = await collection.delete_one({"_id": ObjectId(user_id)})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="User not found.")
-    return {"message": "User deleted successfully"}
+
+    result = await db.delete_obj(user_id, collection)
+
+    if result:
+        return {"message": f"User deleted successfully"}
+    else:
+        raise {"message": f"User {user_id} not found. Nothing to delete successfully"}

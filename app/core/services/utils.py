@@ -1,6 +1,7 @@
 from typing import Union, Any
 import os
 import sys
+import datetime as dt
 
 import pydantic
 import yaml
@@ -38,6 +39,12 @@ def load_yaml(path: str, **template_vars) -> Any:
             template = yaml.safe_load(f)
             render = render_template(template, **template_vars)
         return render
+
+
+def format_date(date: str | dt.datetime) -> str:
+    if isinstance(date, str):
+        date = dt.datetime.fromisoformat(date)
+    return date.strftime('%Y-%m-%d %H:%M')
 
 
 def get_model_size(data: pydantic.BaseModel | dict | Any) -> float:

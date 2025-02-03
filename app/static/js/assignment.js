@@ -118,13 +118,10 @@ function deleteAssignment(assignmentId) {
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => {
-            if (response.ok) {
-                alert("Assignment deleted successfully");
-                window.location.href = "/assignment/list";  // Redirect to assignment list page
-            } else {
-                alert("Error deleting the assignment");
-            }
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/assignment/list";
         })
         .catch(error => {
             alert("Error: " + error);

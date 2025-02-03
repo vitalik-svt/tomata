@@ -12,13 +12,10 @@ function deleteUser(userId) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => {
-            if (response.ok) {
-                alert('User deleted successfully');
-                location.reload();  // Reload the page to reflect the changes
-            } else {
-                alert('Failed to delete user');
-            }
+        }).then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/user/list";
         });
     }
 }

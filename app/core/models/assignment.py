@@ -13,14 +13,14 @@ from enum import Enum
 from app.settings import settings
 
 
-class KeyValue(BaseModel):
+class EventData(BaseModel):
     key: str
     value: str
     comment: Union[str, None] = None
 
 
 class EventsMapper(BaseModel):
-    data: Dict[str, List[KeyValue]]
+    data: Dict[str, List[EventData]]
 
     @classmethod
     async def from_yaml(cls, path: str = settings.app_config_events_mapper_path) -> "EventsMapper":
@@ -78,8 +78,13 @@ class CustomBaseModel(BaseModel):
 
         schema_raw = cls.model_json_schema(mode=mode)
         schema_clean = jsonref.replace_refs(schema_raw).copy()
-        drop_keys = {"$defs", "$ref"}
+
+        # recursive delete
+        drop_keys = {"$defs", "$ref"}  # all refs
         schema_clean = cls._remove_keys_recursively(schema_clean, drop_keys)
+
+        # drop class description comment from first level
+        schema_clean.pop("description", None)  # Remove the description key if it exists
 
         return json.dumps(schema_clean, indent=4, ensure_ascii=False) if return_str else schema_clean
 
@@ -93,13 +98,14 @@ class Status(Enum):
     works_on_prod = 'Works on prod'
 
 
-class Image(CustomBaseModel):
+class Image(BaseModel):
 
     model_config = ConfigDict(
         json_schema_extra={"title": "Image", "type": "object", "format": "grid"}
     )
 
     file: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={
             "title": "File",
             "type": "string",
@@ -109,9 +115,11 @@ class Image(CustomBaseModel):
         }
     )
     description: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Description", "type": "string", "options": {"grid_columns": 6}}
     )
     location: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "location", "type": "string", "readonly": True}
     )
 
@@ -136,29 +144,36 @@ class Event(CustomBaseModel):
     )
 
     name: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Event name", "type": "string", "minLength": 1, "propertyOrder": 100350}
     )
     images: Union[List[Image], SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Images", "type": "array", "format": "table", "propertyOrder": 100400}
     )
     event_type: Union[str, SkipJsonSchema[None]] = Field(
         # will update enum only when need it
-        json_schema_extra={"title": "Event Type", "type": "string", "enum": ['placeholder'], "propertyOrder": 100500}
+        default=None,
+        json_schema_extra={"title": "Event Type", "type": "string", "enum": [], "propertyOrder": 100500}
     )
     description: Union[str, SkipJsonSchema[None]] = Field(
         default="Событие должно срабатывать при ХХХ\nПри срабатывании данного события должны передаваться следующие данные:",
         json_schema_extra={"title": "Event Description", "type": "string", "format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 100600}
     )
     event_data: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Event Data", "type": "string", "format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 100700}
     )
     check_comment: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Check comment", "type": "string", "format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 100800}
     )
     check_images: Union[List[Image], SkipJsonSchema[None]] = Field(
+        default_factory=list,
         json_schema_extra={"title": "Check Images", "type": "array", "format": "table", "propertyOrder": 100900}
     )
     internal_comment: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Internal comment", "type": "string","format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 101000}
     )
     event_ready: Union[bool, SkipJsonSchema[None]] = Field(
@@ -167,17 +182,23 @@ class Event(CustomBaseModel):
     )
 
 
-class Block(CustomBaseModel):
+class Block(BaseModel):
 
     model_config = ConfigDict(
         json_schema_extra={"title": "Block", "type": "object"}
     )
 
     name: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra= {"title": "Block name","type": "string", "minLength": 1, "propertyOrder": 100100}
     )
     description: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Block description", "format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 100200}
+    )
+    block_comment: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": "Block comment", "format": "xhtml", "options": {"wysiwyg": True}, "propertyOrder": 100201}
     )
     events: Union[List[Event], SkipJsonSchema[None]] = Field(
         default_factory=list,
@@ -188,11 +209,12 @@ class Block(CustomBaseModel):
 class AssignmentBase(CustomBaseModel):
 
     """
-    ATTENTION, IF CHANGE SCHEMA!
+    ATTENTION, IN ANY CHANGE SCHEMA!
 
     1) NO SERIALIZATION ALIASES NOWHERE IN CHILD CLASSES EXCEPT _id!
-    2) All fields should be optional:
+    2) All added fields should be optional:
     add: "Union[required_type, SkipJsonSchema[None]]" just in case!
+    3) All added fields should have default = None!
 
     Here and everywhere in models:
 
@@ -219,9 +241,11 @@ class AssignmentBase(CustomBaseModel):
     )
 
     group_id: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Group ID", "type": "string", "readonly": True, "propertyOrder": 10000}
     )
     name: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Assignment Name", "type": "string", "minLength": 1, "propertyOrder": 10002}
     )
     status: Union[str, SkipJsonSchema[None]] = Field(
@@ -230,7 +254,7 @@ class AssignmentBase(CustomBaseModel):
         json_schema_extra={"title": "Status", "type": "string", "enum": ['placeholder'], "propertyOrder": 100003}
     )
     issue: Union[str, SkipJsonSchema[None]] = Field(
-        default="",
+        default=None,
         json_schema_extra={"title": "Issue number", "type": "string", "propertyOrder": 100004}
     )
     version: Union[int, SkipJsonSchema[None]] = Field(
@@ -242,18 +266,23 @@ class AssignmentBase(CustomBaseModel):
         json_schema_extra={"title": "Save Counter", "type": "integer", "readonly": True, "propertyOrder": 100006}
     )
     author: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Author", "type": "string", "minLength": 1, "propertyOrder": 100020}
     )
     created_at: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Create dtm", "type": "string", "readonly": True, "propertyOrder": 100030}
     )
     updated_at: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Update dtm", "type": "string", "readonly": True, "propertyOrder": 100040}
     )
     description: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
         json_schema_extra={"title": "Assignment description", "type": "string", "format": "markdown", "propertyOrder": 100050}
     )
     blocks: Union[List[Block], SkipJsonSchema[None]] = Field(
+        default_factory=list,
         json_schema_extra={"title": "Blocks", "type": "array", "propertyOrder": 100060}
     )
     size: Union[float, SkipJsonSchema[None]] = Field(
@@ -263,13 +292,23 @@ class AssignmentBase(CustomBaseModel):
     )
 
 
-class AssignmentWithSchema(AssignmentBase):
+class AssignmentSchema(BaseModel):
 
-    assignment_ui_schema: str = Field(
-        json_schema_extra={"title": "Assignment Schema", "type": "string", "readonly": True, "propertyOrder": 100100}
+    assignment_ui_schema: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": "Assignment Schema", "type": "string", "readonly": True, "propertyOrder": 100102}
     )
-    events_mapper: str = Field(
-        json_schema_extra={"title": "Events Mapper", "type": "string", "readonly": True, "propertyOrder": 100100}
+    events_mapper: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": "Events Mapper", "type": "string", "readonly": True, "propertyOrder": 100103}
+    )
+
+
+class AssignmentSchemaHash(BaseModel):
+
+    assignment_ui_schema_hash: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": "Assignment Schema Hash", "type": "string", "readonly": True, "propertyOrder": 101300}
     )
 
 
@@ -278,7 +317,7 @@ class AssignmentWithSchema(AssignmentBase):
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
-class AssignmentID(CustomBaseModel):
+class AssignmentID(BaseModel):
 
     model_config = ConfigDict(
         populate_by_name=True,  # Для работы с _id -> id
@@ -289,17 +328,30 @@ class AssignmentID(CustomBaseModel):
     )
 
     # overwriting standard method, careful!
-    def model_dump(self, use_mongo_id: bool = True, **kwargs):
-        if use_mongo_id:
-            return super().model_dump(by_alias=True, **kwargs)
-        else:
+    def model_dump(self, rename_mongo_id: bool = False, **kwargs):
+        if rename_mongo_id:
             return super().model_dump(by_alias=False, **kwargs)
+        else:
+            return super().model_dump(by_alias=True, **kwargs)
 
 
-class AssignmentInDB(AssignmentID, AssignmentWithSchema):
+class AssignmentInUI(AssignmentID, AssignmentSchemaHash, AssignmentBase):
+    """
+    Base + SchemaHash + ID
+    """
     pass
 
 
-class AssignmentInUI(AssignmentID, AssignmentBase):
+class AssignmentWithFullSchema(AssignmentSchema, AssignmentSchemaHash, AssignmentBase):
+    """
+    Base + SchemaHash + Schema
+    """
+    pass
+
+
+class AssignmentInDB(AssignmentID, AssignmentWithFullSchema):
+    """
+    Base + SchemaHash + Schema + ID
+    """
     pass
 

@@ -23,6 +23,8 @@ passlib = "^1.7.4"
 python-multipart = "^0.0.19"
 jsonref = "^1.1.0"
 aioboto3 = "^13.4.0"
+pandas = "^2.2.3"
+httpx = "^0.28.1"
 
 
 [build-system]

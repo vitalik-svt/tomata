@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4" style="max-width: 60%;">
+<div class="container mt-4" style="max-width: 70%;">
 
     {% if grouped_assignments %}
         <h5 class="text-center">List of All Assignments</h5>
@@ -45,6 +45,7 @@
                         <th>Created At</th>
                         <th>Updated At</th>
                         <th>Size</th>
+                        <th>Schema Hash</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -60,6 +61,7 @@
                         <td>{{ assignment.created_at }}</td>
                         <td>{{ assignment.updated_at }}</td>
                         <td>{{ assignment.size }}</td>
+                        <td>{{ assignment.assignment_ui_schema_hash }}</td>
                         <td>
                             <div class="btn-group d-flex">
                                 <a href="/assignment/{{ assignment.id }}" class="btn btn-success btn-sm flex-fill">Edit</a>
@@ -76,8 +78,15 @@
         {% endif %}
     </div>
     {% endfor %}
-    <br>
-    <br>
 </div>
+
+{% if current_user %}
+<div class="text-center text-muted mt-5" style="color: lightgray;">
+    current schema hash: {{ assignment_ui_schema_hash }}
+</div>
+{% endif %}
+
+<br>
+<br>
 
 {% endblock %}

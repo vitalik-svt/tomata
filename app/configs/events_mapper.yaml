@@ -232,14 +232,13 @@ GA:clickCategory:
     comment: URL категории
 
 pupa:
-  - key: sdf
-    value: sdfsdf
+  - key: kupa
+    value: kupa
 
 lupa:
-  - key: sdf
-    value: sdfsdf
+  - key: pupa
+    value: pupa
 
 kupa:
-  - key: sdf
-    value: sdfsdf
-
+  - key: lupa
+    value: lupa

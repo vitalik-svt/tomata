@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4" style="max-width: 70%;">
+<div class="container mt-4" style="max-width: 80%;">
 
     {% if grouped_assignments %}
         <h5 class="text-center">List of All Assignments</h5>
@@ -68,6 +68,7 @@
                                 <button onclick="createNewVersion('{{ assignment.id }}')" class="btn btn-primary btn-sm flex-fill">Fork</button>
                                 <button onclick="viewAssignment('{{ assignment.id }}')" class="btn btn-secondary btn-sm flex-fill">View</button>
                                 <button onclick="deleteAssignment('{{ assignment.id }}')" class="btn btn-danger btn-sm flex-fill">Delete</button>
+                                <a href="/service/schema/{{ assignment.id }}" class="btn btn-warning btn-sm flex-fill" target="_blank">Schema</a>
                             </div>
                         </td>
                     </tr>

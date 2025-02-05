@@ -295,10 +295,6 @@ class AssignmentBase(CustomBaseModel):
         validation_alias=AliasChoices('size', 'weight_mb'),
         json_schema_extra={"title": "Weight, MB", "type": "float", "readonly": True, "propertyOrder": 101200}
     )
-    NEW_FIELD_3: Union[str, SkipJsonSchema[None]] = Field(
-        default=None,
-        json_schema_extra={"title": "NEW_FIELD_3", "type": "string", "propertyOrder": 0}
-    )
 
 
 class AssignmentSchema(BaseModel):

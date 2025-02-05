@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Schema</title>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        .json-block {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .json-content {
+            display: none;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        .json-block.opened .json-content {
+            display: block;
+        }
+        .json-block:hover {
+            background-color: #e6e6e6;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 2px;
+        }
+        .col-md-6 {
+            width: 49%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="text-center">Service Details</h2>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="section col-md-6">
+            <h4 class="mb-4">Assignment ID: {{ assignment_id }}</h4>
+            <h4 class="mb-4">Assignment UI Schema Hash: {{ assignment_ui_schema_hash }}</h4>
+
+            <div class="json-block" onclick="toggleJsonBlock(this)">
+                <strong>Assignment UI Schema</strong>
+                <div class="json-content">
+                    <pre>{{ assignment_ui_schema }}</pre>
+                </div>
+            </div>
+
+            <div class="json-block" onclick="toggleJsonBlock(this)">
+                <strong>Assignment Events Mapper</strong>
+                <div class="json-content">
+                    <pre>{{ events_mapper }}</pre>
+                </div>
+            </div>
+
+            <div class="json-block" onclick="toggleJsonBlock(this)">
+                <strong>Assignment Data</strong>
+                <div class="json-content">
+                    <pre>{{ assignment_data }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="section col-md-6">
+            <h4 class="mb-4">Model: {{ model_class_name }}</h4>
+            <h4 class="mb-4">Model Schema Hash: {{ assignment_ui_schema_hash_cls }}</h4>
+
+            <div class="json-block" onclick="toggleJsonBlock(this)">
+                <strong>Model UI Schema</strong>
+                <div class="json-content">
+                    <pre>{{ assignment_ui_schema_cls }}</pre>
+                </div>
+            </div>
+
+            <div class="json-block" onclick="toggleJsonBlock(this)">
+                <strong>Model Events Mapper</strong>
+                <div class="json-content">
+                    <pre>{{ events_mapper_cls }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleJsonBlock(element) {
+        // Toggle the 'opened' class to show/hide the JSON content
+        element.classList.toggle('opened');
+    }
+</script>
+
+{% endblock %}

@@ -216,6 +216,11 @@ class AssignmentBase(CustomBaseModel):
     add: "Union[required_type, SkipJsonSchema[None]]" just in case!
     3) All added fields should have default = None!
 
+    NEW_FIELD: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": ..., "type": ..., "propertyOrder": ...}
+    )
+
     Here and everywhere in models:
 
     In case of renaming field:

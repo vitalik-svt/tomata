@@ -15,7 +15,7 @@ from app.core.services.assignment import (
     update_assignment, duplicate_assignment,
     get_assignment_ui_schema_from_actual_model, create_new_assignment
 )
-from app.core.models.assignment import AssignmentWithFullSchema, AssignmentInDB, AssignmentInUI, Status
+from app.core.models.assignment import AssignmentWithFullSchema, AssignmentInUI
 from app.core.models.user import UserInDB
 from app.settings import settings
 
@@ -39,14 +39,14 @@ async def list_assignments_route(
     ):
 
     all_assignments_data = await get_all_assignments_data(collection=collection)
-    grouped_assignments = group_assignments_data(all_assignments_data, group_by="group_id", sort_by=("created_at", "version"))
-    _, assignment_ui_schema_hash, _ = await get_assignment_ui_schema_from_actual_model(AssignmentInUI.__name__)
+    grouped_assignments = group_assignments_data(all_assignments_data)
+    _, current_assignment_ui_schema_hash, _ = await get_assignment_ui_schema_from_actual_model(AssignmentInUI.__name__)
 
     return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,
         "current_user": current_user,
         "grouped_assignments": grouped_assignments,
-        "assignment_ui_schema_hash": assignment_ui_schema_hash
+        "current_assignment_ui_schema_hash": current_assignment_ui_schema_hash
     })
 
 
@@ -101,7 +101,7 @@ async def get_assignment_route(
 @router.post("/{assignment_id}")
 async def save_assignment_route(
         assignment_id: str,
-        assignment_update: AssignmentInUI,
+        assignment_update: dict,
         current_user: UserInDB = Depends(require_authenticated_user),
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):

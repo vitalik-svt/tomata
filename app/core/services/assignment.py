@@ -2,7 +2,7 @@ from typing import Literal, Collection, List, Tuple, Iterable, Any, Type, Union
 import hashlib
 import uuid
 import datetime as dt
-import pandas as pd
+from collections import defaultdict
 from pydantic import BaseModel
 
 from motor.motor_asyncio import AsyncIOMotorCollection
@@ -30,18 +30,18 @@ async def get_assignment_data(
         return assignment_data
 
 
-async def update_assignment(assignment_id: str, assignment_update: AssignmentInUI, collection: AsyncIOMotorCollection) -> dict:
+async def update_assignment(assignment_id: str, assignment_update: dict, collection: AsyncIOMotorCollection) -> dict:
 
     # TODO
     # assignment_update.images_to_locations
 
-    assignment_update.updated_at = dt.datetime.now().isoformat()
-    assignment_update.save_counter += 1
-    assignment_update.size = get_model_size(assignment_update)
+    assignment_update['updated_at'] = dt.datetime.now().isoformat()
+    assignment_update['save_counter'] += 1
+    assignment_update['size'] = get_model_size(assignment_update)
 
-    del assignment_update.id  # pass to update without id
+    del assignment_update['id']  # pass to update without id
 
-    return await db.update_obj(assignment_id, assignment_update, collection)
+    return await db.update_obj(assignment_id, assignment_update, collection, model_dump_kwargs={'exclude_none': True})
 
 
 async def duplicate_assignment(assignment_id: str, collection: AsyncIOMotorCollection, use_new_schema: bool = True) -> str:
@@ -55,6 +55,8 @@ async def duplicate_assignment(assignment_id: str, collection: AsyncIOMotorColle
             assignment_data['assignment_ui_schema'] = assignment_ui_schema
             assignment_data['assignment_ui_schema_hash'] = assignment_ui_schema_hash
             assignment_data['events_mapper'] = events_mapper
+            # create from model, to get all changed fields
+            assignment_data = AssignmentWithFullSchema(**assignment_data).model_dump()
 
         _, latest_version = await db.max_value_in_group(
             group_field='group_id', group_val=assignment_data['group_id'], find_max_in_field='version', collection=collection
@@ -70,7 +72,6 @@ async def duplicate_assignment(assignment_id: str, collection: AsyncIOMotorColle
         raise HTTPException(status_code=500, detail=f"Error while creating new version: {e}")
 
     return str(result['_id'])
-
 
 
 async def get_all_assignments_data(
@@ -96,21 +97,22 @@ async def get_all_assignments_data(
     return assignments
 
 
-def group_assignments_data(assignments: Collection[dict[str, Any]], group_by: str, sort_by: Collection = None) -> dict:
+def group_assignments_data(assignments: Collection[dict[str, Any]], group_by: str = "group_id", sort_by_desc: tuple = ("created_at","version")) -> dict:
 
     if not assignments:
         return {}
 
-    df = pd.DataFrame(assignments)
-    grouped_assignments = {}
+    if sort_by_desc:
+        assignments = sorted(assignments, key=lambda x: tuple(x[field] for field in sort_by_desc), reverse=True)
 
-    for group_id, group in df.groupby(group_by):
-        if sort_by:
-            group = group.sort_values(by=list(sort_by), ascending=[False] * len(sort_by))
-        grouped_assignments[group_id] = {
-            "assignments": group.to_dict(orient="records"),
-            "group_name": group.iloc[0]["name"] if "name" in group.columns else None
-        }
+    grouped_assignments = defaultdict(lambda: {"assignments": [], "group_name": None})
+
+    for assignment in assignments:
+        group_id = assignment[group_by]
+        group = grouped_assignments[group_id]
+        if group["group_name"] is None:
+            group["group_name"] = assignment.get("name")
+        group["assignments"].append(assignment)
 
     return grouped_assignments
 

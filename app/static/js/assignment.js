@@ -37,7 +37,7 @@ function createNewAssignment() {
     .then(response => {
         if (response.ok) {
             response.json().then(data => {
-                alert("New assignment created successfully!");
+//                alert("New assignment created successfully!");
                 // Redirect to the new assignment page using the returned ID
                 window.location.href = `/assignment/${data.id}`;
             });
@@ -87,7 +87,7 @@ function confirmNewVersion() {
         })
     .then(response => response.json())
     .then(data => {
-        alert("New version created successfully");
+//        alert("New version created successfully");
         window.location.href = `/assignment/${data.id}`;
     });
     ;

@@ -176,7 +176,7 @@ async def view_latest_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
     try:
-        latest_assignment_id, _ = db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection)
+        latest_assignment_id, _ = await db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection)
         assignment_data = await get_assignment_data(latest_assignment_id, collection, rename_mongo_id=True)
     except Exception as e:
         HTTPException(500, f'Error while viewing group {group_id}: {e}')

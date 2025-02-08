@@ -179,9 +179,6 @@ async def get_assignment_data_with_images(
     assignment_data = await get_assignment_data(assignment_id=assignment_id, collection=collection, as_model=as_model, rename_mongo_id=rename_mongo_id)
     assignment_data = await get_images_for_assignment_from_s3(assignment_data=assignment_data)
 
-    import pprint
-    print(pprint.pformat(assignment_data['blocks']))
-
     return assignment_data
 
 

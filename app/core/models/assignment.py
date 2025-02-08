@@ -104,7 +104,8 @@ class Image(BaseModel):
         json_schema_extra={"title": "Image", "type": "object", "format": "grid"}
     )
 
-    file: Union[str, SkipJsonSchema[None]] = Field(
+    # determine names explicitly, to not confuse with other keys
+    image_data: Union[str, SkipJsonSchema[None]] = Field(
         default=None,
         json_schema_extra={
             "title": "File",
@@ -114,27 +115,14 @@ class Image(BaseModel):
             "format": "url"
         }
     )
-    description: Union[str, SkipJsonSchema[None]] = Field(
-        default=None,
-        json_schema_extra={"title": "Description", "type": "string", "options": {"grid_columns": 6}}
-    )
-    location: Union[str, SkipJsonSchema[None]] = Field(
+    image_location: Union[str, SkipJsonSchema[None]] = Field(
         default=None,
         json_schema_extra={"title": "location", "type": "string", "readonly": True}
     )
-
-    # TODO
-    # @model_validator(mode='before')
-    # def replace(self) -> Self:
-    #     if self.file and not self.location:
-    #         """
-    #         when loads from UI to Location doesn't exists (it can't be set by user, it's readonly)
-    #         """
-    #         ...
-    #     elif self.location and not self.file:
-    #         ...
-    #     return self
-
+    image_description: Union[str, SkipJsonSchema[None]] = Field(
+        default=None,
+        json_schema_extra={"title": "Description", "type": "string", "options": {"grid_columns": 6}}
+    )
 
 
 class Event(CustomBaseModel):

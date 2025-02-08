@@ -1,3 +1,4 @@
+from typing import Callable, Any
 import json
 import datetime as dt
 import logging
@@ -9,13 +10,15 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorCollection
 
 import app.core.services.database as db
+import app.core.services.s3 as s3
 from app.core.services.auth import get_current_user, require_authenticated_user
 from app.core.services.assignment import (
-    get_assignment_data, get_all_assignments_data, group_assignments_data,
+    get_assignment_data_with_images, get_all_assignments_data, group_assignments_data,
     update_assignment, duplicate_assignment,
-    get_assignment_ui_schema_from_actual_model, create_new_assignment
+    get_assignment_ui_schema_from_actual_model, create_new_assignment,
+    upload_images_from_assignment_to_s3_with_clean
 )
-from app.core.models.assignment import AssignmentWithFullSchema, AssignmentInUI
+from app.core.models.assignment import AssignmentWithFullSchema, AssignmentInUI, Event
 from app.core.models.user import UserInDB
 from app.settings import settings
 
@@ -23,7 +26,6 @@ prefix = 'assignment'
 router = APIRouter(prefix=f'/{prefix}')
 templates = Jinja2Templates(directory="app/templates")
 
-logger = logging.getLogger(__name__)
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -63,11 +65,8 @@ async def create_new_assignment_route(
     assignment = await create_new_assignment(AssignmentWithFullSchema)
     assignment.author = current_user.username
 
-    try:
-        result = await db.create_obj(assignment, collection)
-        assignment_id = str(result['_id'])
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creating assignment: {e}")
+    result = await db.create_obj(assignment, collection)
+    assignment_id = str(result['_id'])
 
     return JSONResponse(content={"id": assignment_id})  # we will redirect to get /assignment/{assignment_id} on frontend
 
@@ -80,14 +79,11 @@ async def get_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    assignment_data = await get_assignment_data(assignment_id, collection, rename_mongo_id=True)
+    assignment_data = await get_assignment_data_with_images(assignment_id=assignment_id, collection=collection, rename_mongo_id=True)
 
     # Pick schema and events_mapper, to pass separately, to not show them in UI
     assignment_ui_schema = json.loads(assignment_data.pop('assignment_ui_schema'))
     events_mapper = json.loads(assignment_data.pop('events_mapper'))
-
-    # TODO
-    # assignment.locations_to_images()
 
     return templates.TemplateResponse(f"{prefix}/edit.html", {
         "request": request,
@@ -106,10 +102,8 @@ async def save_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    try:
-        updated_assignment = await update_assignment(assignment_id, assignment_update, collection)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f'Got error updating {assignment_id}: {e}')
+    updated_assignment = await upload_images_from_assignment_to_s3_with_clean(assignment_data=assignment_update, assignment_id=assignment_id)
+    updated_assignment = await update_assignment(assignment_id=assignment_id, data_update=updated_assignment, collection=collection)
 
     return updated_assignment
 
@@ -122,10 +116,7 @@ async def create_assignment_new_version_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    try:
-        new_assignment_id = await duplicate_assignment(assignment_id=assignment_id, collection=collection, use_new_schema = use_new_schema)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error creating assignment: {e}")
+    new_assignment_id = await duplicate_assignment(assignment_id=assignment_id, collection=collection, use_new_schema=use_new_schema)
 
     return JSONResponse(content={"id": new_assignment_id})  # we will redirect to get /assignment/{assignment_id} on frontend
 
@@ -137,13 +128,11 @@ async def delete_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    try:
-        res = await db.delete_obj(assignment_id, collection)
-    except Exception as e:
-        raise HTTPException(500, f"Error deleting Assignment {assignment_id}: {e}")
+    del_assignment = await db.delete_obj(assignment_id, collection)
+    del_assignment_images = await s3.delete_folder(bucket_name=settings.s3_images_bucket, prefix=assignment_id)
 
-    if res:
-        return JSONResponse(content={"message": f"Assignment deleted successfully"})
+    if del_assignment:
+        return JSONResponse(content={"message": f"Assignment deleted successfully with {del_assignment_images} images"})
     else:
         return JSONResponse(content={"message": f"Assignment {assignment_id} hasn't found. Nothing to delete"})
 
@@ -158,7 +147,7 @@ async def view_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
 
-    assignment_data = await get_assignment_data(assignment_id, collection, rename_mongo_id=True)
+    assignment_data = await get_assignment_data_with_images(assignment_id, collection, rename_mongo_id=True)
 
     return templates.TemplateResponse(f"{prefix}/view.html", {
         "request": request,
@@ -175,11 +164,9 @@ async def view_latest_assignment_route(
         current_user: UserInDB = Depends(get_current_user),  # we let any user see that
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
-    try:
-        latest_assignment_id, _ = await db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection)
-        assignment_data = await get_assignment_data(latest_assignment_id, collection, rename_mongo_id=True)
-    except Exception as e:
-        HTTPException(500, f'Error while viewing group {group_id}: {e}')
+
+    latest_assignment_id, _ = await db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection)
+    assignment_data = await get_assignment_data_with_images(latest_assignment_id, collection, rename_mongo_id=True)
 
     return templates.TemplateResponse(f"{prefix}/view.html", {
         "request": request,
@@ -195,10 +182,8 @@ async def delete_group_route(
     current_user: UserInDB = Depends(require_authenticated_user),
     collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
 ):
-    try:
-        num_deleted = await db.delete_by_filter({"group_id": group_id}, collection)
-    except Exception as e:
-        raise HTTPException(500, f'Error while deleting group {group_id}: {e}')
+
+    num_deleted = await db.delete_by_filter({"group_id": group_id}, collection)
 
     if num_deleted:
         return JSONResponse(content={"message": f"Group with {num_deleted} assignments deleted successfully"})

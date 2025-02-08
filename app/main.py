@@ -12,7 +12,7 @@ from fastapi.templating import Jinja2Templates
 from app.core.routes import core_router
 from app.settings import settings
 from app.core.services.auth import initialize_user
-from app.core.services.s3 import create_bucket
+from app.core.services.s3 import get_s3_client, create_bucket
 
 PROJECT_NAME = 'TOMATA'
 

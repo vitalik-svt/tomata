@@ -140,8 +140,8 @@
                                 {% if event.images %}
                                     <div class="event-images">
                                         {% for image in event.images %}
-                                            {% if image.file %}
-                                                <img src="{{ image.file }}">
+                                            {% if image.image_data %}
+                                                <img src="{{ image.image_data }}">
                                             {% endif %}
                                             {% if image.description %}
                                                 <p class="image-description">{{ image.description }}</p>

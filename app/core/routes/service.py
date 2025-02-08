@@ -57,7 +57,10 @@ async def get_assignment_route(
 
 
 @router.get("/logs")
-async def get_logs(back_days: int = 1):
+async def get_logs(
+        current_user: UserInDB = Depends(require_authenticated_user),
+        back_days: int = 1
+):
     try:
         logs_content = ""
         cutoff_date = dt.datetime.now() - dt.timedelta(days=back_days)

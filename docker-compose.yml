@@ -15,6 +15,7 @@ services:
       - "${TOMATA_APP_PORT}:${TOMATA_APP_PORT}"
     volumes:
       - ./app:/usr/src/app
+      - ./logs:/usr/src/logs
     depends_on:
       - mongo
       - minio

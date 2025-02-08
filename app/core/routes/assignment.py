@@ -1,7 +1,6 @@
 from typing import Callable, Any
 import json
 import datetime as dt
-import logging
 
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.templating import Jinja2Templates

@@ -2,15 +2,11 @@ from typing import List
 from urllib.parse import urlparse
 from contextlib import asynccontextmanager
 import aioboto3
-import logging
 import base64
 import mimetypes
 
-
 from app.settings import settings
-
-
-logger = logging.getLogger(__name__)
+from app.logger import logger
 
 
 @asynccontextmanager
@@ -79,9 +75,9 @@ async def create_bucket(bucket_name: str = settings.s3_images_bucket):
                 await s3_client.create_bucket(Bucket=bucket_name)
             except Exception:
                 raise Exception(f"Can't create bucket {bucket_name}")
-            return logger.info(f"Bucket {bucket_name} created successfully.")
+            return logger.debug(f"Bucket {bucket_name} created successfully.")
         else:
-            return logger.info(f"Bucket {bucket_name} already exists.")
+            return logger.debug(f"Bucket {bucket_name} already exists.")
 
 
 async def list_files(bucket_name: str = settings.s3_images_bucket, prefix: str = '') -> List:
@@ -139,7 +135,7 @@ async def delete_folder(bucket_name: str, prefix: str) -> int:
                     await s3_client.delete_object(Bucket=bucket_name, Key=file_key)
                     deleted_files += 1
             else:
-                logging.info(f"No files found under prefix '{prefix}' to delete.")
+                logger.info(f"No files found under prefix '{prefix}' to delete.")
 
         except Exception as e:
             raise Exception(f"Error deleting folder with prefix {prefix}: {str(e)}")
@@ -171,7 +167,7 @@ async def base64_image_to_s3(file_name_wo_ext: str, base64_string: str, bucket_n
             bucket_name=bucket_name, prefix=prefix, file_name=file_name_with_ext, file_data=image_data
         )
 
-        logging.info(f"Image uploaded to S3: {s3_uri}")
+        logger.info(f"Image uploaded to S3: {s3_uri}")
         return s3_uri
 
     except Exception as e:

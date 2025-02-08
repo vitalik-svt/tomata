@@ -1,10 +1,10 @@
 import json
 import datetime as dt
-import logging
 
 from fastapi import APIRouter, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi import Query
+from fastapi.responses import PlainTextResponse
 from starlette.requests import Request
 from motor.motor_asyncio import AsyncIOMotorCollection
 
@@ -18,7 +18,6 @@ from app.settings import settings
 
 prefix = 'service'
 router = APIRouter(prefix=f'/{prefix}')
-logger = logging.getLogger(__name__)
 templates = Jinja2Templates(directory="app/templates")
 
 
@@ -55,3 +54,26 @@ async def get_assignment_route(
         "assignment_ui_schema_cls": assignment_ui_schema_cls,
         "events_mapper_cls": events_mapper_cls
     })
+
+
+@router.get("/logs")
+async def get_logs(back_days: int = 1):
+    try:
+        logs_content = ""
+        cutoff_date = dt.datetime.now() - dt.timedelta(days=back_days)
+
+        for file in settings.app_log_path.iterdir():
+            if file.is_file():
+                file_mod_time = dt.datetime.fromtimestamp(file.stat().st_mtime)
+
+                if file_mod_time >= cutoff_date:
+                    with open(file, "r", encoding="utf-8") as f:
+                        logs_content += f"\n\n\n--- {file.name} ---\n\n\n"
+                        logs_content += f.read()
+
+        if not logs_content:
+            return PlainTextResponse("No log files found from the last specified days", status_code=404)
+        return PlainTextResponse(logs_content)
+
+    except Exception as e:
+        return PlainTextResponse(f"Error: {str(e)}", status_code=500)

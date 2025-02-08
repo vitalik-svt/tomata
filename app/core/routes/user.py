@@ -65,7 +65,8 @@ async def list_users(
 
     return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,
-        "users": users
+        "users": users,
+        "current_user": current_user
     })
 
 

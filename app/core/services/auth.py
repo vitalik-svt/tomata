@@ -1,6 +1,5 @@
 from typing import Optional
 import datetime as dt
-import logging
 
 from passlib.context import CryptContext
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -10,9 +9,7 @@ import jwt
 from app.settings import settings
 from app.core.models.user import User, UserInDB, Role
 import app.core.services.database as db
-
-
-logger = logging.getLogger(__name__)
+from app.logger import logger
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -105,7 +102,6 @@ async def initialize_user(
     if not existing_admin:
         admin = User(username=username, hashed_password=get_password_hash(password), role=role)
         await db.create_obj(admin.model_dump(), collection)
-        logger.info("Admin user created successfully.")
+        logger.debug("Admin user created successfully.")
     else:
-        logger.info("At least one admin user already exists.")
-
+        logger.debug("At least one admin user already exists.")

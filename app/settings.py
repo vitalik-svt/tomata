@@ -1,6 +1,7 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from base64 import b64encode
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -12,6 +13,7 @@ class Settings(BaseSettings):
 
     # app
     app_log_level: str = 'DEBUG'
+    app_log_folder: str = './logs'
     app_host: str = '0.0.0.0'
     app_port: int = 8000
     app_workers: int = 1
@@ -58,6 +60,10 @@ class Settings(BaseSettings):
     @property
     def s3_endpoint(self):
         return f'http://{self.s3_server}:{self.s3_port}'
+
+    @property
+    def app_log_path(self):
+        return Path(self.app_log_folder)
 
 
 settings = Settings()

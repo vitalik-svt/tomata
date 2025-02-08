@@ -37,6 +37,11 @@
                 <ul class="navbar-nav ms-auto">
                     {% if current_user %}
                     <li class="nav-item me-3">
+                        <a href="/service/logs?back_days=2" target="_blank">
+                            <button type="button" class="btn btn-outline-secondary">Logs</button>
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
                         <a href="http://localhost:9001" target="_blank">
                             <button type="button" class="btn btn-outline-secondary">Minio S3</button>
                         </a>

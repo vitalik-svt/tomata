@@ -1,5 +1,4 @@
 from typing import Optional
-import logging
 
 from app.core.services.auth import create_access_token
 
@@ -12,8 +11,7 @@ from starlette.templating import Jinja2Templates
 from app.core.services.auth import authenticate_user, get_current_user
 from app.core.models.user import UserInDB
 from app.settings import settings
-
-logger = logging.getLogger(__name__)
+from app.logger import logger
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -21,6 +19,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/error")
 async def home_route(request: Request):
+    logger.error('got test exception', exc_info=True)
     raise Exception('test exception')
 
 

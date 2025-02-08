@@ -2,6 +2,7 @@ from typing import Union, Any
 import os
 import sys
 import datetime as dt
+import hashlib
 
 import pydantic
 import yaml
@@ -61,3 +62,7 @@ def get_model_size(data: pydantic.BaseModel | dict | Any) -> float:
         pass
 
     return round(sys.getsizeof(data) / (1024 ** 2), 2)
+
+
+def get_hash(str_: str) -> str:
+    return hashlib.md5(str_.encode()).hexdigest()

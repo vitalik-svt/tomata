@@ -40,7 +40,8 @@ But if you make fork from assignment (no matter what schema option will be chose
 and in group mode only latest version always will be shown.
  
 <h4>List of events and event_data:</h4>
-You can change it in `app/config/events_mapper.yaml`. `key`, `value` are mandatory, `comment` optional.
+You can change it in `app/config/events_mapper.yaml`.<br>
+Fields `key` and `value` are mandatory, `comment` - optional.
 
 <h4>Assignment default values:</h4>
 Can be changed in pydantic models `app/core/models/assignment.py`

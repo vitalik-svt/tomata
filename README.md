@@ -9,7 +9,7 @@ Provides role model.
 *n.b. everywhere Assignemt === Document*
 
 <h4>Interface Example</h4>
-[Link to screenshots](#Interface Example)
+[Link to screenshots](#Interface)
 
 <h4>Options for Assignment creation:</h4>
 
@@ -73,9 +73,9 @@ Schema - it's basically tree of Pydantic models
 1. `poetry shell`
 2. `pytest`
 
-## Interface Example
+## Interface
 
-![img_1.png](img_1.png)
-![img.png](img.png)
-![img_2.png](img_2.png)
-![img_3.png](img_3.png)
+![img_1.png](doc/img_1.png)
+![img.png](doc/img.png)
+![img_2.png](doc/img_2.png)
+![img_3.png](doc/img_3.png)

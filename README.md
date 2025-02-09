@@ -8,6 +8,9 @@ Provides role model.
 
 *n.b. everywhere Assignemt === Document*
 
+<h4>Interface Example</h4>
+[Link to screenshots](#Interface Example)
+
 <h4>Options for Assignment creation:</h4>
 
 - Just create **new one**, and it will be created with latest available schema (schema - it's amount of fields, their names, in other words - structure of document)
@@ -69,3 +72,10 @@ Schema - it's basically tree of Pydantic models
 
 1. `poetry shell`
 2. `pytest`
+
+## Interface Example
+
+![img_1.png](img_1.png)
+![img.png](img.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)

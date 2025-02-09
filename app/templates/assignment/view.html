@@ -111,6 +111,8 @@
                     <p>{{ assignment.created_at }}</p>
                     <h2>Updated At</h2>
                     <p>{{ assignment.updated_at }}</p>
+                    <h2>Size Total / Doc</h2>
+                    <p>{{ assignment.size_total }} / {{ assignment.size_doc }}</p>
                 </div>
             </div>
         </div>
@@ -143,8 +145,8 @@
                                             {% if image.image_data %}
                                                 <img src="{{ image.image_data }}">
                                             {% endif %}
-                                            {% if image.description %}
-                                                <p class="image-description">{{ image.description }}</p>
+                                            {% if image.image_description %}
+                                                <p class="image-description">{{ image.image_description }}</p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -163,9 +165,9 @@
                                         {% if event.check_images %}
                                             <div class="event-images">
                                                 {% for image in event.check_images %}
-                                                    <img src="{{ image.file }}">
-                                                    {% if image.description %}
-                                                        <p class="image-description">{{ image.description }}</p>
+                                                    <img src="{{ image.image_data }}">
+                                                    {% if image.image_description %}
+                                                        <p class="image-description">{{ image.image_description }}</p>
                                                     {% endif %}
                                                 {% endfor %}
                                             </div>

@@ -15,22 +15,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
         except Exception as e:
-            logger.error(
-                "Error while operating request",
-                exc_info=True,
-                extra={
-                    "client_ip": request.client.host,
-                    "method": request.method,
-                    "url": request.url.path
-                }
-            )
+            logger.error(f"Error while operating request {request.method} {request.url.path} from {request.client.host}: {e}", exc_info=True)
             raise e
         process_time = time.time() - start_time
-        logger.info("HTTP request processed", extra={
-            "client_ip": request.client.host,
-            "method": request.method,
-            "url": request.url.path,
-            "status": response.status_code,
-            "time": f"{process_time:.4f}s"
-        })
+        logger.debug(f"HTTP request {request.method} {request.url.path} from {request.client.host} processed for {process_time:.4f}s with {response.status_code}")
         return response

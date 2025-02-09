@@ -12,6 +12,7 @@ from app.core.services.utils import format_date, get_model_size, get_hash
 import app.core.services.database as db
 import app.core.services.s3 as s3
 from app.core.models.assignment import Event, EventsMapper, AssignmentInUI,AssignmentInDB, Status, AssignmentWithFullSchema, Image
+from app.settings import settings
 
 
 def recursive_apply(data: Union[Dict, List], target_keys: Union[List[str], Tuple[str]], operation: Callable, operation_kwargs: dict = {}) -> Union[Dict, List]:
@@ -182,11 +183,16 @@ async def get_assignment_data_with_images(
     return assignment_data
 
 
-async def update_assignment(assignment_id: str, data_update: dict, collection: AsyncIOMotorCollection) -> dict:
+def update_assignment_size_total(data: dict, size_total_field: str = 'size_total') -> dict:
+    data[size_total_field] = get_model_size(data)
+    return data
+
+
+async def update_assignment_in_db(assignment_id: str, data_update: dict, collection: AsyncIOMotorCollection) -> dict:
 
     data_update['updated_at'] = dt.datetime.now().isoformat()
     data_update['save_counter'] += 1
-    data_update['size'] = get_model_size(data_update)
+    data_update['size_doc'] = get_model_size(data_update)
 
     del data_update['id']  # pass to update without id
 
@@ -203,7 +209,7 @@ async def duplicate_assignment(assignment_id: str, collection: AsyncIOMotorColle
 
     # on creation, we can either use schema of base assignment, or get most actual one
     if use_new_schema:
-        assignment_ui_schema, assignment_ui_schema_hash, events_mapper = await get_assignment_ui_schema_from_actual_model(AssignmentInUI.__name__)
+        assignment_ui_schema, assignment_ui_schema_hash, events_mapper = await get_actual_model_schema_data()
         assignment_data['assignment_ui_schema'] = assignment_ui_schema
         assignment_data['assignment_ui_schema_hash'] = assignment_ui_schema_hash
         assignment_data['events_mapper'] = events_mapper
@@ -230,7 +236,7 @@ async def duplicate_assignment(assignment_id: str, collection: AsyncIOMotorColle
 
 async def get_all_assignments_data(
         collection: AsyncIOMotorCollection,
-        needed_cols: Collection = ("group_id", "_id", "name", "status", "issue", "version", "author", "created_at", "updated_at", "size", "assignment_ui_schema_hash"),
+        needed_cols: Collection = ("group_id", "_id", "name", "status", "issue", "version", "author", "created_at", "updated_at", "size_total", "assignment_ui_schema_hash"),
         rename_mongo_id: bool = True,
         format_date_cols: Collection = ("created_at", "updated_at")
 ) -> List[dict[str, Any]]:
@@ -271,18 +277,17 @@ def group_assignments_data(assignments: Collection[dict[str, Any]], group_by: st
     return grouped_assignments
 
 
-async def get_assignment_ui_schema_from_actual_model(
-        assignment_class_name: str = Literal['AssignmentInUI', 'AssignmentInDB', 'AssignmentWithSchema', 'AssignmentBase']
-) -> tuple[str, str, str]:
+async def get_actual_model_schema_data() -> tuple[str, str, str]:
     """
     Updating all json descriptions (because it's base for Json Form creation) with most actual data
     Getting Schema and Events mapper (both in json string) to pass it to Front
     """
+    model_class = AssignmentInUI
 
     Event.update_json_schema_for_field('event_type', {"enum": list((await EventsMapper.from_yaml()).dump().keys())})
-    eval(assignment_class_name).update_json_schema_for_field('status', {"enum": [status.value for status in Status]})
+    model_class.update_json_schema_for_field('status', {"enum": [status.value for status in Status]})
 
-    assignment_ui_schema = eval(assignment_class_name).dump_schema(return_str=True)
+    assignment_ui_schema = model_class.dump_schema(return_str=True)
     assignment_ui_schema_hash = get_hash(assignment_ui_schema)
     events_mapper = (await EventsMapper.from_yaml()).dump(return_str=True)
 
@@ -293,7 +298,7 @@ async def create_new_assignment(assignment_model_class: Type[BaseModel] = Assign
 
     # we always get the newest configs on creation!
     # it's json form schema for UI, so we create schema from it (without unwanted fields (assignment_ui_schema and events_mapper)
-    assignment_ui_schema, assignment_ui_schema_hash, events_mapper = await get_assignment_ui_schema_from_actual_model(AssignmentInUI.__name__)
+    assignment_ui_schema, assignment_ui_schema_hash, events_mapper = await get_actual_model_schema_data()
 
     assignment = assignment_model_class(
         assignment_ui_schema=assignment_ui_schema,
@@ -319,3 +324,23 @@ async def create_new_assignment(assignment_model_class: Type[BaseModel] = Assign
     )
 
     return assignment
+
+
+async def del_assignment_with_images(assignment_id: str, collection: AsyncIOMotorCollection, bucket_name=settings.s3_images_bucket) -> Tuple[int, int]:
+
+    deleted_assignment_amount = await db.delete_obj(assignment_id, collection)
+    deleted_assignment_images = await s3.delete_folder(bucket_name=bucket_name, prefix=assignment_id)
+
+    return deleted_assignment_amount, deleted_assignment_images
+
+
+async def del_group_of_assignments_with_images(
+        group_id: str, collection: AsyncIOMotorCollection, bucket_name=settings.s3_images_bucket
+) -> Tuple[Union[int, None], Union[int,None]]:
+
+    assignments = await db.get_obj_by_fields({"group_id": group_id}, collection, filter_cols=('_id',), find_many=True)
+    num_deleted_docs = await db.delete_by_filter({"group_id": group_id}, collection)
+    deleted_images = [await s3.delete_folder(bucket_name=settings.s3_images_bucket, prefix=assignment['_id']) for assignment in assignments]
+    deleted_images_num = sum(deleted_images) if deleted_images else 0
+
+    return num_deleted_docs, deleted_images_num

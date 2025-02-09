@@ -1,9 +1,48 @@
 import pytest
+from bson import ObjectId
 
-from typing import List, Dict, Callable, Union
-import asyncio
+from app.core.services.assignment import (
+    async_recursive_apply, recursive_apply, clean_dict_field, get_assignment_data,
+    duplicate_assignment, get_all_assignments_data, group_assignments_data
+)
 
-from app.core.services.assignment import async_recursive_apply, recursive_apply, clean_dict_field, get_image_from_loc
+def test_recursive_apply(mock_utils):
+    data = {
+        "image_location": "some_url",
+        "details": {
+            "image_location": "another_url",
+            "name": "Assignment1"
+        }
+    }
+
+    def operation(value, **kwargs):
+        return value.upper()
+
+    target_keys = ["image_location"]
+    result = recursive_apply(data, target_keys, operation)
+
+    assert result["image_location"] == "SOME_URL"
+    assert result["details"]["image_location"] == "ANOTHER_URL"
+
+
+@pytest.mark.asyncio
+async def test_async_recursive_apply(mock_utils):
+    data = {
+        "image_location": "some_url",
+        "details": {
+            "image_location": "another_url",
+            "name": "Assignment1"
+        }
+    }
+
+    async def async_operation(value, **kwargs):
+        return value.upper()
+
+    target_keys = ["image_location"]
+    result = await async_recursive_apply(data, target_keys, async_operation)
+
+    assert result["image_location"] == "SOME_URL"
+    assert result["details"]["image_location"] == "ANOTHER_URL"
 
 
 def test_clean_data():
@@ -161,3 +200,28 @@ async def test_empty_data():
     result_empty_list = await async_recursive_apply(data_empty_list, 'numbers', multiply_by_2)
     assert result_empty_dict == {}
     assert result_empty_list == []
+
+
+@pytest.mark.asyncio
+async def test_get_assignment_data(mock_db):
+    assignment_id = '507f1f77bcf86cd799439011'
+    collection = mock_db
+
+    result = await get_assignment_data(assignment_id, collection)
+
+    assert result["name"] == "assignment1"
+    assert result["status"] == "active"
+
+
+def test_group_assignments_data():
+    assignments = [
+        {"group_id": "group1", "name": "assignment1", "updated_at": "2024-01-01", "created_at": "2024-01-01"},
+        {"group_id": "group1", "name": "assignment2", "updated_at": "2024-01-01", "created_at": "2024-01-01"},
+        {"group_id": "group2", "name": "assignment3", "updated_at": "2024-01-01", "created_at": "2024-01-01"}
+    ]
+
+    result = group_assignments_data(assignments)
+
+    assert len(result) == 2
+    assert "group1" in result
+    assert len(result["group1"]["assignments"]) == 2

@@ -8,27 +8,13 @@ import asyncio
 from app.settings import settings
 
 
-class ExtraFormatter(logging.Formatter):
-    def format(self, record: logging.LogRecord) -> str:
-        default_attrs = logging.LogRecord(None, None, None, None, None, None, None).__dict__.keys()
-        extras = set(record.__dict__.keys()) - default_attrs
-
-        log_items = ['"message": "%(message)s"']
-        for attr in extras:
-            log_items.append(f'"{attr}": "%({attr})s"')
-        format_str = f'{{{", ".join(log_items)}}}'
-        self._style._fmt = format_str
-
-        return super().format(record)
-
-
 LOG_DIR = Path(settings.app_log_folder)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 logger = logging.getLogger("tomata")
 logger.setLevel(settings.app_log_level)
 
-log_format = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s : %(extra)s', defaults= {"extra": {}})
+log_format = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s')
 
 # file handler
 file_handler = TimedRotatingFileHandler(

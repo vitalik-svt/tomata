@@ -7,6 +7,7 @@ import app.core.services.database as db
 from app.core.services.auth import get_password_hash, require_authenticated_user
 from app.core.models.user import User, UserInDB, Role
 from app.settings import settings
+from app.logger import logger
 
 
 prefix = 'user'
@@ -48,7 +49,8 @@ async def add_user_route(
     user = User(username=username, hashed_password=get_password_hash(password), role=Role(role).value, active=True)
 
     try:
-        await db.create_obj(user, collection)
+        user = await db.create_obj(user, collection)
+        logger.info(f"User {username} ({user=}) created")
         return RedirectResponse(url=f"/{prefix}/list", status_code=303)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating user: {e}")
@@ -78,6 +80,7 @@ async def delete_user(
     ):
 
     result = await db.delete_obj(user_id, collection)
+    logger.info(f"User {user_id} deleted")
 
     if result:
         return {"message": f"User deleted successfully"}

@@ -21,7 +21,7 @@
              {% endif %}>
             <div>
                 <h5>{{ group_data.group_name }}<br></h5>
-                <i><small>{{ group_id }}</small></i>
+                <i><small>group id: {{ group_id }}</small></i>
             </div>
             <div class="btn-group d-flex">
                 <button class="btn btn-secondary btn-sm" type="button" onclick="viewGroupAssignment('{{ group_id }}')">View Latest Version</button>
@@ -44,7 +44,7 @@
                         <th>Author</th>
                         <th>Created At</th>
                         <th>Updated At</th>
-                        <th>Size</th>
+                        <th>Size Total</th>
                         <th>Schema Hash</th>
                         <th>Actions</th>
                     </tr>
@@ -60,7 +60,7 @@
                         <td>{{ assignment.author }}</td>
                         <td>{{ assignment.created_at }}</td>
                         <td>{{ assignment.updated_at }}</td>
-                        <td>{{ assignment.size }}</td>
+                        <td>{{ assignment.size_total }}</td>
                         <td>{{ assignment.assignment_ui_schema_hash }}</td>
                         <td>
                             <div class="btn-group d-flex">
@@ -83,7 +83,7 @@
 
 {% if current_user %}
 <div class="text-center text-muted mt-5" style="color: lightgray;">
-    current schema hash: {{ current_assignment_ui_schema_hash }}
+    Actual schema hash: {{ actual_assignment_ui_schema_hash }}
 </div>
 {% endif %}
 

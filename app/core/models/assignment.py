@@ -67,7 +67,7 @@ class CustomBaseModel(BaseModel):
         return d
 
     @classmethod
-    def dump_schema(cls, mode: Literal['validation', 'serialization'] = 'serialization', return_str: bool = False) -> Union[str, dict]:
+    def dump_schema(cls, mode: Literal['validation', 'serialization'] = 'serialization', return_str: bool = False, drop_keys: Union[Tuple, List] = ("$defs", "$ref")) -> Union[str, dict]:
 
         """
         Create schema for frontend generator https://github.com/json-editor/json-editor
@@ -80,7 +80,6 @@ class CustomBaseModel(BaseModel):
         schema_clean = jsonref.replace_refs(schema_raw).copy()
 
         # recursive delete
-        drop_keys = {"$defs", "$ref"}  # all refs
         schema_clean = cls._remove_keys_recursively(schema_clean, drop_keys)
 
         # drop class description comment from first level
@@ -104,7 +103,8 @@ class Image(BaseModel):
         json_schema_extra={"title": "Image", "type": "object", "format": "grid"}
     )
 
-    # determine names explicitly, to not confuse with other keys
+    # determine names explicitly as image_data, image_location, to not confuse with other keys
+    # because we will iterate over whole Assignment/Document model and change them dynamically
     image_data: Union[str, SkipJsonSchema[None]] = Field(
         default=None,
         json_schema_extra={
@@ -140,7 +140,7 @@ class Event(CustomBaseModel):
         json_schema_extra={"title": "Images", "type": "array", "format": "table", "propertyOrder": 100400}
     )
     event_type: Union[str, SkipJsonSchema[None]] = Field(
-        # will update enum only when need it
+        # will update enum only when need it (dynamically, later)
         default=None,
         json_schema_extra={"title": "Event Type", "type": "string", "enum": [], "propertyOrder": 100500}
     )
@@ -197,7 +197,7 @@ class Block(BaseModel):
 class AssignmentBase(CustomBaseModel):
 
     """
-    ATTENTION, IN ANY CHANGE SCHEMA!
+    ATTENTION, IN ANY CHANGE OF SCHEMA HERE OR IN UNDERLYING MODELS!
 
     1) NO SERIALIZATION ALIASES NOWHERE IN CHILD CLASSES EXCEPT _id!
     2) All added fields should be optional:
@@ -217,9 +217,6 @@ class AssignmentBase(CustomBaseModel):
 
     In case of adding field:
     1) Make it Optional = None
-
-    In case of deleting field:
-    pass
 
     # useful docs
     https://docs.pydantic.dev/latest/concepts/json_schema/#programmatic-field-title-generation
@@ -278,10 +275,15 @@ class AssignmentBase(CustomBaseModel):
         default_factory=list,
         json_schema_extra={"title": "Blocks", "type": "array", "propertyOrder": 100060}
     )
-    size: Union[float, SkipJsonSchema[None]] = Field(
+    size_doc: Union[float, SkipJsonSchema[None]] = Field(
         default=0,
-        validation_alias=AliasChoices('size', 'weight_mb'),
-        json_schema_extra={"title": "Weight, MB", "type": "float", "readonly": True, "propertyOrder": 101200}
+        validation_alias=AliasChoices('size_doc', ),
+        json_schema_extra={"title": "Size doc, MB", "type": "float", "readonly": True, "propertyOrder": 101200}
+    )
+    size_total: Union[float, SkipJsonSchema[None]] = Field(
+        default=0,
+        validation_alias=AliasChoices('size_total', ),
+        json_schema_extra={"title": "Size total, MB", "type": "float", "readonly": True, "propertyOrder": 101201}
     )
 
 
@@ -313,7 +315,7 @@ PyObjectId = Annotated[str, BeforeValidator(str)]
 class AssignmentID(BaseModel):
 
     model_config = ConfigDict(
-        populate_by_name=True,  # Для работы с _id -> id
+        populate_by_name=True,  # To work with "private" data _id -> id
     )
 
     id: Annotated[str, BeforeValidator(str)] = Field(..., validation_alias='_id', serialization_alias='id',

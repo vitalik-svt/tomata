@@ -1,5 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
+from unittest.mock import AsyncMock, MagicMock
+from bson import ObjectId
+
 from app.main import app
 
 
@@ -7,6 +10,41 @@ from app.main import app
 def test_client():
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture
+def mock_s3():
+    mock = AsyncMock()
+    mock.s3_to_base64_image.return_value = "base64_image_string"
+    mock.base64_image_to_s3.return_value = "s3://bucket/prefix/file_key"
+    return mock
+
+@pytest.fixture
+def mock_db():
+    mock = AsyncMock()
+    mock.find_one.return_value = {"_id": ObjectId('507f1f77bcf86cd799439011'), "name": "assignment1", "status": "active"}
+    mock.get_obj_by_id.return_value = {"_id": ObjectId('507f1f77bcf86cd799439011'), "name": "assignment1", "status": "active"}
+    mock.update_obj.return_value = {"_id": ObjectId('507f1f77bcf86cd799439011'), "status": "updated"}
+    return mock
+
+@pytest.fixture
+def mock_utils():
+    mock = MagicMock()
+    mock.format_date.return_value = "2025-02-09"
+    mock.get_model_size.return_value = 1024
+    mock.get_hash.return_value = "hash_value"
+    return mock
+
+@pytest.fixture()
+def mock_collection():
+    return AsyncMock()
+
+
+@pytest.fixture()
+def mock_db_collection_dependency(mock_collection):
+    async def mock_dependency(*args, **kwargs):
+        return mock_collection
+    return mock_dependency
 
 
 @pytest.fixture()

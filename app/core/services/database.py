@@ -1,3 +1,4 @@
+from typing import Union, List, Tuple
 import pydantic
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection, AsyncIOMotorDatabase
 from bson import ObjectId
@@ -31,14 +32,22 @@ async def get_obj_by_id(obj_id: str, collection: AsyncIOMotorCollection):
     return obj
 
 
-async def get_obj_by_fields(query: dict, collection: AsyncIOMotorCollection) -> dict:
+async def get_obj_by_fields(query: dict, collection: AsyncIOMotorCollection, filter_cols: Union[Tuple, List] = None, find_many: bool = False) -> Union[dict, List[dict]]:
     if "_id" in query and isinstance(query["_id"], str):
         query["_id"] = ObjectId(query["_id"])
 
-    obj = await collection.find_one(query)
-    if obj:
-        obj["_id"] = str(obj["_id"])
-    return obj
+    if find_many:
+        objs = [obj async for obj in collection.find(query, filter_cols)]
+        if objs:
+            for obj in objs:
+                obj["_id"] = str(obj["_id"])
+        return objs
+
+    else:
+        obj = await collection.find_one(query, filter_cols)
+        if obj:
+            obj["_id"] = str(obj["_id"])
+        return obj
 
 
 async def create_obj(obj: dict | pydantic.BaseModel, collection: AsyncIOMotorCollection, model_dump_kwargs: dict = None):

@@ -13,13 +13,15 @@ import app.core.services.s3 as s3
 from app.core.services.auth import get_current_user, require_authenticated_user
 from app.core.services.assignment import (
     get_assignment_data_with_images, get_all_assignments_data, group_assignments_data,
-    update_assignment, duplicate_assignment,
-    get_assignment_ui_schema_from_actual_model, create_new_assignment,
-    upload_images_from_assignment_to_s3_with_clean
+    update_assignment_in_db, duplicate_assignment, update_assignment_size_total,
+    get_actual_model_schema_data, create_new_assignment,
+    upload_images_from_assignment_to_s3_with_clean, del_assignment_with_images,
+    del_group_of_assignments_with_images
 )
 from app.core.models.assignment import AssignmentWithFullSchema, AssignmentInUI, Event
 from app.core.models.user import UserInDB
 from app.settings import settings
+from app.logger import logger
 
 prefix = 'assignment'
 router = APIRouter(prefix=f'/{prefix}')
@@ -41,13 +43,13 @@ async def list_assignments_route(
 
     all_assignments_data = await get_all_assignments_data(collection=collection)
     grouped_assignments = group_assignments_data(all_assignments_data)
-    _, current_assignment_ui_schema_hash, _ = await get_assignment_ui_schema_from_actual_model(AssignmentInUI.__name__)
+    _, actual_assignment_ui_schema_hash, _ = await get_actual_model_schema_data()
 
     return templates.TemplateResponse(f"{prefix}/list.html", {
         "request": request,
         "current_user": current_user,
         "grouped_assignments": grouped_assignments,
-        "current_assignment_ui_schema_hash": current_assignment_ui_schema_hash
+        "actual_assignment_ui_schema_hash": actual_assignment_ui_schema_hash
     })
 
 
@@ -80,7 +82,7 @@ async def get_assignment_route(
 
     assignment_data = await get_assignment_data_with_images(assignment_id=assignment_id, collection=collection, rename_mongo_id=True)
 
-    # Pick schema and events_mapper, to pass separately, to not show them in UI
+    # Pop schema and events_mapper, to pass separately, to not show them in UI data itself
     assignment_ui_schema = json.loads(assignment_data.pop('assignment_ui_schema'))
     events_mapper = json.loads(assignment_data.pop('events_mapper'))
 
@@ -101,8 +103,9 @@ async def save_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    updated_assignment = await upload_images_from_assignment_to_s3_with_clean(assignment_data=assignment_update, assignment_id=assignment_id)
-    updated_assignment = await update_assignment(assignment_id=assignment_id, data_update=updated_assignment, collection=collection)
+    updated_assignment = update_assignment_size_total(data=assignment_update)
+    updated_assignment = await upload_images_from_assignment_to_s3_with_clean(assignment_data=updated_assignment, assignment_id=assignment_id)
+    updated_assignment = await update_assignment_in_db(assignment_id=assignment_id, data_update=updated_assignment, collection=collection)
 
     return updated_assignment
 
@@ -127,8 +130,7 @@ async def delete_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
 
-    del_assignment = await db.delete_obj(assignment_id, collection)
-    del_assignment_images = await s3.delete_folder(bucket_name=settings.s3_images_bucket, prefix=assignment_id)
+    del_assignment, del_assignment_images = await del_assignment_with_images(assignment_id=assignment_id, collection=collection)
 
     if del_assignment:
         return JSONResponse(content={"message": f"Assignment deleted successfully with {del_assignment_images} images"})
@@ -141,7 +143,7 @@ async def delete_assignment_route(
 async def view_assignment_route(
         request: Request,
         assignment_id: str,
-        # we don't want to let any user see that, because they can be confused. only latest version availiable with group endpoint
+        # we don't want to let any user see that, because they can be confused. Only latest version availiable with group endpoint
         current_user: UserInDB = Depends(require_authenticated_user),
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
@@ -182,10 +184,10 @@ async def delete_group_route(
     collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
 ):
 
-    num_deleted = await db.delete_by_filter({"group_id": group_id}, collection)
+    num_deleted_docs, deleted_images_num = await del_group_of_assignments_with_images(group_id=group_id, collection=collection)
 
-    if num_deleted:
-        return JSONResponse(content={"message": f"Group with {num_deleted} assignments deleted successfully"})
+    if num_deleted_docs:
+        return JSONResponse(content={"message": f"Group ({num_deleted_docs} assignments, {deleted_images_num} images) deleted successfully"})
     else:
         return JSONResponse(content={"message": f"Group ID {group_id} doesn't exist. Nothing deleted"})
 

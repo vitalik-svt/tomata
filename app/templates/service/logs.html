@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Logs</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 80%;">
+    <h2 class="mb-3">Logs</h2>
+
+    {% if logs %}
+    <div class="accordion" id="logsAccordion">
+        {% for log in logs %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ loop.index }}"
+                        aria-expanded="true"
+                        aria-controls="collapse{{ loop.index }}">
+                    {{ log.filename }} ({{ log.date }})
+                </button>
+            </h2>
+            <div id="collapse{{ loop.index }}"
+                 class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                 aria-labelledby="heading{{ loop.index }}"
+                 data-bs-parent="#logsAccordion">
+                <div class="accordion-body">
+                    <pre class="log-content">{{ log.content }}</pre>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No log files found from the last specified days.</p>
+    {% endif %}
+</div>
+
+<style>
+    pre.log-content {
+        white-space: pre-wrap;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        max-height: 900px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}

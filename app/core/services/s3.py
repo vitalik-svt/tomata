@@ -167,7 +167,7 @@ async def base64_image_to_s3(file_name_wo_ext: str, base64_string: str, bucket_n
             bucket_name=bucket_name, prefix=prefix, file_name=file_name_with_ext, file_data=image_data
         )
 
-        logger.info(f"Image uploaded to S3: {s3_uri}")
+        logger.debug(f"Image uploaded to S3: {s3_uri}")
         return s3_uri
 
     except Exception as e:
@@ -183,6 +183,8 @@ async def s3_to_base64_image(file_key: str, bucket_name: str = settings.s3_image
         mime_type, _ = mimetypes.guess_type(file_key)
         mime_type = "application/octet-stream" if not mime_type else mime_type
         data = f"data:{mime_type};base64,{base64_string}"
+
+        logger.debug(f"Image downloaded from S3: {get_s3_uri(bucket=bucket_name, object_key=file_key, prefix=prefix)}")
         return data
 
     except Exception as e:

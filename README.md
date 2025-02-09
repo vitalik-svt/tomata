@@ -8,8 +8,7 @@ Provides role model.
 
 *n.b. everywhere Assignemt === Document*
 
-<h4>Interface Example</h4>
-[Link to screenshots](#Interface)
+[Link to interface screenshots](#interface)
 
 <h4>Options for Assignment creation:</h4>
 
@@ -75,7 +74,7 @@ Schema - it's basically tree of Pydantic models
 
 ## Interface
 
-![img_1.png](doc/img_1.png)
-![img.png](doc/img.png)
-![img_2.png](doc/img_2.png)
-![img_3.png](doc/img_3.png)
+![edit_1.png](doc/edit_1.png)
+![list_1.png](doc/list_1.png)
+![view_1.png](doc/view_1.png)
+![user_1.png](doc/user_1.png)

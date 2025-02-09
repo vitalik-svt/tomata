@@ -1,8 +1,9 @@
 # TOMATA
 
-Tool for documents creation in particular format with automation.<br>
-Lets you create, store and view Documents (Technical Assignments) in particular format.<br>
-Provides role model.
+Tool for creation/management and Document sharing.<br>
+Lets you create, store and view Document in particular format.<br>
+Provides role model, multiple independent versions of document.<br>
+Can handle document schema change.<br>
 
 ## Usage
 
@@ -37,7 +38,7 @@ But new field - does.
 
 Each new assignment has their one group_id. <br>
 But if you make fork from assignment (no matter what schema option will be chosen) - it will be forked with same `group_id`,
-and in group mode only latest version always will be shown.
+and in group mode only latest version will always be shown.
  
 <h4>List of events and event_data:</h4>
 You can change it in `app/config/events_mapper.yaml`.<br>
@@ -46,10 +47,15 @@ Fields `key` and `value` are mandatory, `comment` - optional.
 <h4>Assignment default values:</h4>
 Can be changed in pydantic models `app/core/models/assignment.py`
 
-Any modification doesn't require restart of the app, and can be donw on the fly.<br>
+Any modification doesn't require restart of the app, and can be down on the fly.<br>
 If modification hasn't been applied somehow, restart app.
 - `docker-compose down`
 - `docker-compose up -d`
+
+<h4>Schema changes:</h4>
+
+Done through change of pydantic model.
+Previous document will be stored and shown with their one schema.
 
 ## Deployment
 

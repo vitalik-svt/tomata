@@ -55,7 +55,6 @@ If modification hasn't been applied somehow, restart app.
 
 1. create `.env` from `.env.template` and set envs
 2. run `docker-compose up -d` for full run (with database)
-3. run `poetry run python script.py` for app only (without database)
 
 ## Development
 

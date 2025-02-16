@@ -20,6 +20,12 @@
         border: 1px solid #ccc;
         border-radius: 5px;
     }
+    .section-small {
+        margin-bottom: 5px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
     .image-description {
         font-style: italic;
         color: #555;
@@ -90,40 +96,40 @@
             <div class="left-column">
                 <div class="section-top">
                     <h2>Assignment Name</h2>
-                    <p>{{ assignment.name }}</p>
+                    <p>{{ assignment_data.name }}</p>
                     <h2>Author Email</h2>
-                    <p>{{ assignment.author }}</p>
+                    <p>{{ assignment_data.author }}</p>
                     <h2>Version</h2>
-                    <p>{{ assignment.version }}</p>
+                    <p>{{ assignment_data.version }}</p>
                     <h2>Status</h2>
-                    <p>{{ assignment.status }}</p>
+                    <p>{{ assignment_data.status }}</p>
                     <h2>Issue number</h2>
-                    <p>{{ assignment.issue }}</p>
+                    <p>{{ assignment_data.issue }}</p>
                 </div>
             </div>
             <div class="right-column">
                 <div class="section-top">
                     <h2>Group ID</h2>
-                    <p>{{ assignment.group_id }}</p>
+                    <p>{{ assignment_data.group_id }}</p>
                     <h2>Assignment ID</h2>
-                    <p>{{ assignment.id }}</p>
+                    <p>{{ assignment_data.id }}</p>
                     <h2>Created At</h2>
-                    <p>{{ assignment.created_at }}</p>
+                    <p>{{ assignment_data.created_at }}</p>
                     <h2>Updated At</h2>
-                    <p>{{ assignment.updated_at }}</p>
+                    <p>{{ assignment_data.updated_at }}</p>
                     <h2>Size Total / Doc</h2>
-                    <p>{{ assignment.size_total }} / {{ assignment.size_doc }}</p>
+                    <p>{{ assignment_data.size_total }} / {{ assignment_data.size_doc }}</p>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <h2>Description</h2>
-            <p>{{ assignment.description | replace("\n", "<br>") | safe }}</p>
+            <p>{{ assignment_data.description | replace("\n", "<br>") | safe }}</p>
         </div>
 
         <!-- Blocks and Events -->
-        {% for block in assignment.blocks %}
+        {% for block in assignment_data.blocks %}
             {% set outer_loop = loop %}
             <div class="section">
                 <h3>{{ block.name }}</h3>
@@ -155,23 +161,25 @@
                                 <p>{{ event.description | replace("\n", "<br>") | safe }}</p>
                                 <p><b>{{ event.event_type }}</b></p>
                                 <p>{{ event.event_data | replace("\n", "<br>") | safe}}</p>
-                                {% if event.check_comment or event.check_images%}
-                                    <div class="foldable-header" onclick="toggleContent(event)">
-                                        <span class="toggle-icon">+</span>
-                                        <p>Check info</p>
-                                    </div>
-                                    <div class="foldable-content">
-                                        <p>{{ event.check_comment | replace("\n", "<br>") | safe}}</p>
-                                        {% if event.check_images %}
-                                            <div class="event-images">
-                                                {% for image in event.check_images %}
-                                                    <img src="{{ image.image_data }}">
-                                                    {% if image.image_description %}
-                                                        <p class="image-description">{{ image.image_description }}</p>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
+                                {% if event.check_comment or event.check_images %}
+                                    <div class="section-small">
+                                        <div class="foldable-header" onclick="toggleContent(event)">
+                                            <span class="toggle-icon">+</span>
+                                            <p>Check info</p>
+                                        </div>
+                                        <div class="foldable-content">
+                                            <p>{{ event.check_comment | replace("\n", "<br>") | safe}}</p>
+                                            {% if event.check_images %}
+                                                <div class="event-images">
+                                                    {% for image in event.check_images %}
+                                                        <img src="{{ image.image_data }}">
+                                                        {% if image.image_description %}
+                                                            <p class="image-description">{{ image.image_description }}</p>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 {% endif %}
                             </div>

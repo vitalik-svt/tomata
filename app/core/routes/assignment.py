@@ -59,8 +59,8 @@ async def create_new_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection)),
     ):
     """
-    n.b! That func should be placed in code above get/{assignment_id}, because assignment_id is str also
-    so "new" can be considered as is, if it will be executed earlier
+    n.b! That func should be placed in code above post/{assignment_id}, because assignment_id is str also
+    so "new" can be considered as assignment_id.
     """
 
     assignment = await create_new_assignment(AssignmentWithFullSchema)
@@ -81,7 +81,6 @@ async def get_assignment_route(
     ):
 
     assignment_data = await get_assignment_data_with_images(assignment_id=assignment_id, collection=collection, rename_mongo_id=True)
-
     # Pop schema and events_mapper, to pass separately, to not show them in UI data itself
     assignment_ui_schema = json.loads(assignment_data.pop('assignment_ui_schema'))
     events_mapper = json.loads(assignment_data.pop('events_mapper'))
@@ -89,7 +88,7 @@ async def get_assignment_route(
     return templates.TemplateResponse(f"{prefix}/edit.html", {
         "request": request,
         "current_user": current_user,
-        "assignment": assignment_data,
+        "assignment_data": assignment_data,
         "assignment_ui_schema": assignment_ui_schema,
         "events_mapper": events_mapper
     })
@@ -152,7 +151,7 @@ async def view_assignment_route(
 
     return templates.TemplateResponse(f"{prefix}/view.html", {
         "request": request,
-        "assignment": assignment_data,
+        "assignment_data": assignment_data,
         "group_view": False,
         "current_user": current_user
     })
@@ -171,7 +170,7 @@ async def view_latest_assignment_route(
 
     return templates.TemplateResponse(f"{prefix}/view.html", {
         "request": request,
-        "assignment": assignment_data,
+        "assignment_data": assignment_data,
         "group_view": True,
         "current_user": current_user
     })

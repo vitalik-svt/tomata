@@ -1,3 +1,9 @@
+
+function editAssignment(assignmentId) {
+    redirectWhenReady(`/assignment/${assignmentId}`);
+}
+
+
 function saveExistingAssignment(assignmentId) {
 
     if (!assignmentId) {
@@ -5,6 +11,7 @@ function saveExistingAssignment(assignmentId) {
         return;
     }
 
+    document.getElementById("loading-spinner").style.display = "block"; // show spinner
     const data = editor.getValue();
 
     fetch(`/assignment/${assignmentId}`, {
@@ -16,8 +23,8 @@ function saveExistingAssignment(assignmentId) {
     })
     .then(response => {
         if (response.ok) {
-            alert("Assignment saved successfully!");
-            window.location.href = `/assignment/${assignmentId}`;  // Redirect to the same assignment page
+            redirectWhenReady(`/assignment/${assignmentId}`);  // Redirect to the same assignment page
+            alert("Assignment saved successfully! You will be redirected to page with updated data.");
         } else {
             alert("Error saving assignment!");
         }
@@ -37,8 +44,6 @@ function createNewAssignment() {
     .then(response => {
         if (response.ok) {
             response.json().then(data => {
-//                alert("New assignment created successfully!");
-                // Redirect to the new assignment page using the returned ID
                 window.location.href = `/assignment/${data.id}`;
             });
         } else {
@@ -75,6 +80,9 @@ function confirmNewVersion() {
     console.log("Collected assignmentId:", assignmentId);
     console.log("Collected useNewSchema:", useNewSchema);
 
+    closeModal();
+    document.getElementById("loading-spinner").style.display = "block";
+
     fetch(`/assignment/${assignmentId}/create_new_version?use_new_schema=${useNewSchema}`, {
         method: 'POST',
         headers: {
@@ -82,23 +90,22 @@ function confirmNewVersion() {
         }
     })
     .catch(error => alert("Error: " + error))
-    .finally(() => {
-            closeModal();
-        })
     .then(response => response.json())
     .then(data => {
-//        alert("New version created successfully");
-        window.location.href = `/assignment/${data.id}`;
+        redirectWhenReady(`/assignment/${data.id}`);
     });
     ;
 }
 
 
-// Закрытие модального окна
 function closeModal() {
     const modal = document.getElementById('confirmationModal');
     if (modal) {
-        modal.remove();
+        modal.style.transition = 'opacity 0.1s ease-out';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.remove();
+        }, 100);
     }
 }
 
@@ -112,6 +119,7 @@ function deleteAssignment(assignmentId) {
 
     const confirmation = confirm("Are you sure you want to delete this assignment?");
     if (confirmation) {
+        document.getElementById("loading-spinner").style.display = "block";
         fetch(`/assignment/${assignmentId}`, {
             method: 'DELETE',
             headers: {
@@ -139,22 +147,8 @@ function viewAssignment(assignmentId) {
 
     const confirmation = confirm("Last saved version will be viewed. Make sure you saved progress!");
     if (confirmation) {
-        fetch(`/assignment/${assignmentId}/view`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (response.ok) {
-                window.open(`/assignment/${assignmentId}/view`, '_blank');
-            } else {
-                alert("Error viewing the assignment");
-            }
-        })
-        .catch(error => {
-            alert("Error: " + error);
-        });
+        document.getElementById("loading-spinner").style.display = "block";
+        redirectWhenReady(`/assignment/${assignmentId}/view`, true);
     }
 }
 

@@ -12,11 +12,11 @@ class Settings(BaseSettings):
     env: str = 'LOCAL'
 
     # app
-    app_log_level: str = 'DEBUG'
+    app_log_level: str = 'INFO'
     app_log_folder: str = './logs'
     app_host: str = '0.0.0.0'
     app_port: int = 8000
-    app_workers: int = 1
+    app_workers: int = 3
     app_reload: bool = True
     app_fastapi_middleware_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')
     app_jwt_secret_key: str = b64encode(os.urandom(24)).decode('utf-8')

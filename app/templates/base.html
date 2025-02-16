@@ -16,6 +16,7 @@
     <!-- Json editor framework -->
     <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
     <!-- local functions -->
+    <script src="{{ url_for('static', path='js/redirectWhenReady.js') }}"></script>
     <script src="{{ url_for('static', path='js/assignment.js') }}"></script>
     <script src="{{ url_for('static', path='js/editor.js') }}"></script>
     <script src="{{ url_for('static', path='js/group.js') }}"></script>
@@ -27,6 +28,13 @@
     {% endblock %}
 
 </head>
+
+<div id="loading-spinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050; text-align: center;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading</span>
+    </div>
+    <h4>Loading, please wait...</h4>
+</div>
 
 <body>
 
@@ -42,12 +50,12 @@
                         </a>
                     </li>
                     <li class="nav-item me-3">
-                        <a href="http://localhost:9001" target="_blank">
+                        <a href="#" id="minio-link" target="_blank">
                             <button type="button" class="btn btn-outline-secondary">Minio S3</button>
                         </a>
                     </li>
                     <li class="nav-item me-3">
-                        <a href="http://localhost:8071" target="_blank">
+                        <a href="#" id="mongo-link" target="_blank">
                             <button type="button" class="btn btn-outline-secondary">MongoDB</button>
                         </a>
                     </li>
@@ -79,6 +87,12 @@
 
     {% block content %}
     {% endblock %}
+
+    <script>
+        var serverIp = window.location.hostname;
+        document.getElementById("minio-link").href = "http://" + serverIp + ":9001";
+        document.getElementById("mongo-link").href = "http://" + serverIp + ":8071";
+    </script>
 
 </body>
 

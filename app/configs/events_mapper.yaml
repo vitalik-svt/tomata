@@ -12,9 +12,9 @@ GA:detail:
     comment: стоимость единицы товара до снижения цены или null
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен'
   - key: productAvailability
-    value: S-02.12.21/D-03.12.21
+    value: 'S-02.12.21/D-03.12.21'
     comment: S - самовывоз и через дефис дата; / для разделения типов; D - доставка и через дефис дата; Если товар недоступен, то передавать “unavailable”
   - key: productsQuantityAvailable
     value: '543'
@@ -35,7 +35,7 @@ GA:detail:
     value: '4.5'
     comment: рейтинг товара
   - key: productDiscount
-    value: 0.25 
+    value: '0.25' 
     comment: прцент скидки, если скидки нет - передаем null
 
 GA:pageview:
@@ -66,15 +66,15 @@ GA:addToCart:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25' 
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:removeFromCart:
@@ -100,15 +100,15 @@ GA:removeFromCart:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25' 
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:clickButton:
@@ -132,7 +132,7 @@ GA:clickProduct:
     comment: блок (карусель, список), в котором расположен элемент
   - key: elementName
     value: productNameLink
-    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу"
+    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу'
   - key: productName
     value: Краска акриловая «Шедевр» цвет аквамарин 60 г
     comment: название продукта, по которому кликнули
@@ -144,18 +144,18 @@ GA:clickProduct:
     comment: стоимость единицы продукта
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25'
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPrevPrice
     value: '175.00'
     comment: стоимость единицы товара до снижения цены или null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:impressions:
@@ -166,7 +166,7 @@ GA:impressions:
     comment: блок (карусель, список), в котором расположен элемент
   - key: elementName
     value: productNameLink
-    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу"
+    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу'
   - key: productName
     value: Краска акриловая «Шедевр» цвет аквамарин 60 г
     comment: название продукта, по которому кликнули
@@ -178,18 +178,18 @@ GA:impressions:
     comment: стоимость единицы продукта
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25'
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPrevPrice
     value: '175.00'
     comment: стоимость единицы товара до снижения цены или null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:addToShoppingList:
@@ -199,7 +199,7 @@ GA:addToShoppingList:
     value: productDetail
     comment: блок (карусель, список), в котором расположен элемент
   - key: productName
-    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    value: 'Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов'
     comment: название товара
   - key: productId
     value: '18149575'
@@ -215,15 +215,15 @@ GA:addToShoppingList:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25' 
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:removeFromShoppingList:
@@ -249,15 +249,15 @@ GA:removeFromShoppingList:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productDiscount
-    value: 0.25 
+    value: '0.25' 
     comment: прцент скидки, если скидки нет - передаем null
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:hover:
@@ -283,12 +283,12 @@ GA:hover:
     comment: стоимость единицы товара до снижения цены или null
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
   - key: productPosition
-    value : 3
+    value : '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:show:
@@ -316,7 +316,7 @@ GA:promoView:
         'name': '07-karusel', // расположение баннера
         'creative': '07-proektirovanie-vannoi-komnaty', // уникальное название баннера
         'position': '1' // номер позиции баннера (слева-направо от 1)
-        }
+        },
         ...]
     comment: Массив элементов (баннеров)
       
@@ -332,7 +332,7 @@ GA:promoClick:
         'name': '07-karusel', // расположение баннера
         'creative': '07-proektirovanie-vannoi-komnaty', // уникальное название баннера
         'position': '1' // номер позиции баннера (слева-направо от 1)
-        }
+        },
         ...]
     comment: Массив элементов (баннеров)
 
@@ -357,11 +357,13 @@ GA:checkout:
     comment: наименование шага оформления заказа
   - key: products
     value: |
-      [{productId: 89376231
-        productName: "Штора на ленте Шарлотт 200x280 см цвет бежевый"
-        productParcelNumber: 1
-        productParcelType: "delivery"productPrice: 650
-        productQuantity: 1productShared: false}
+      [
+      {productId: 89376231
+        productName: 'Штора на ленте Шарлотт 200x280 см цвет бежевый'
+        productParcelNumber: '1'
+        productParcelType: 'delivery'productPrice: 650
+        productQuantity: '1'
+        productShared: false},
         ...]
     comment: массив товаров в событии
   - key: gpTransactionId
@@ -392,7 +394,7 @@ GA:mediaLoad:
     value: '175.00'
     comment: стоимость единицы товара до скидки. Если скидки нет, то передавать null
   - key: productDiscount
-    value: 0.48
+    value: '0.48'
     comment: процент скидки. Если скидки нет, то передавать null
   - key: productPosition
     value: '3'

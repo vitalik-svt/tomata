@@ -15,7 +15,7 @@ from app.settings import settings
 
 class EventData(BaseModel):
     key: str
-    value: str
+    value: Union[str, int, float]
     comment: Union[str, None] = None
 
 

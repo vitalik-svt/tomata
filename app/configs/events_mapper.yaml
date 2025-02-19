@@ -1,9 +1,4 @@
 GA:detail:
-  - key: elementType
-    value: page
-  - key: elementBlock
-    value: productDetail
-    comment: блок, в котором расположен элемент
   - key: productName
     value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
   - key: productId
@@ -17,9 +12,9 @@ GA:detail:
     comment: стоимость единицы товара до снижения цены или null
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен'
   - key: productAvailability
-    value: S-02.12.21/D-03.12.21
+    value: 'S-02.12.21/D-03.12.21'
     comment: S - самовывоз и через дефис дата; / для разделения типов; D - доставка и через дефис дата; Если товар недоступен, то передавать “unavailable”
   - key: productsQuantityAvailable
     value: '543'
@@ -33,68 +28,27 @@ GA:detail:
   - key: subdivision
     value: Сухие смеси и грунтовки
     comment: подотдел, к которому относится товар, должен передаваться в текстовом формате
-  - key: wowPrice
-    value: '1'
-    comment: признак шок-цены (null если товар без шок-цены)
-
-GA:pageview:
-  - key: pageType
-    value: ProductPage
-    comment: тип страницы
-  - key: pagePath
-    value: /product/shtukaturka-gipsovaya-luchshaya-cena-30-kg-14238108/
-    comment: путь к странице
-
-GA:Shoppilot:
-  - key: elementType
-    value: product
-  - key: elementBlock
-    value: reviews
-    comment: блок, в котором расположен элемент
-  - key: productId
-    value: '18149575'
-    comment: артикул товара
   - key: reviews
     value: '222'
     comment: количество отзывов
   - key: avgRating
     value: '4.5'
     comment: рейтинг товара
+  - key: productDiscount
+    value: '0.25' 
+    comment: прцент скидки, если скидки нет - передаем null
 
-GA:findInStore:
-  - key: elementType
-    value: button
-  - key: elementBlock
-    value: productDetail
-    comment: блок, в котором расположен элемент
-  - key: wowPrice
-    value: '1'
-    comment: признак шок-цены (null если товар без шок-цены)
-  - key: productName
-    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
-    comment: название товара
-  - key: productId
-    value: '18149575'
-    comment: артикул товара
-  - key: productPrice
-    value: '75.00'
-    comment: стоимость единицы товара
-  - key: productPrevPrice
-    value: '175.00'
-    comment: стоимость единицы товара до снижения цены или null
-  - key: productBelong
-    value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
-  - key: productTag
-    value: bestPrice
-    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+GA:pageview:
+  - key: pagePath
+    value: /product/shtukaturka-gipsovaya-luchshaya-cena-30-kg-14238108/
+    comment: путь к странице
 
 GA:addToCart:
   - key: elementType
     value: button
   - key: elementBlock
     value: productDetail
-    comment: блок, в котором расположен элемент
+    comment: блок (карусель, список), в котором расположен элемент
   - key: productName
     value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
     comment: название товара
@@ -112,17 +66,23 @@ GA:addToCart:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25' 
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:removeFromCart:
   - key: elementType
     value: button
   - key: elementBlock
     value: productDetail
-    comment: блок, в котором расположен элемент
+    comment: блок (карусель, список), в котором расположен элемент
   - key: productName
     value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
     comment: название товара
@@ -140,17 +100,23 @@ GA:removeFromCart:
     comment: на какое количество единиц изменилось количество товара
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25' 
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:clickButton:
   - key: elementType
     value: button
   - key: elementBlock
     value: productDetail
-    comment: блок, в котором расположен элемент
+    comment: блок (карусель, список), в котором расположен элемент
   - key: elementName
     value: toBasket
     comment: название блока
@@ -163,10 +129,10 @@ GA:clickProduct:
     value: product
   - key: elementBlock
     value: productDetail / variants
-    comment: блок, в котором расположен элемент
+    comment: блок (карусель, список), в котором расположен элемент
   - key: elementName
-    value: productPhotoLink
-    comment: название блока
+    value: productNameLink
+    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу'
   - key: productName
     value: Краска акриловая «Шедевр» цвет аквамарин 60 г
     comment: название продукта, по которому кликнули
@@ -178,55 +144,264 @@ GA:clickProduct:
     comment: стоимость единицы продукта
   - key: productBelong
     value: LeroyMerlin
-    comment: "принадлежность товара: LeroyMerlinMarketplace - для товаров Маркетплейс, Longtail - для товаров longtail, LeroyMerlin - для товаров Леруа Мерлен"
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25'
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
+
+GA:impressions:
+  - key: elementType
+    value: product
+  - key: elementBlock
+    value: productDetail / variants
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: elementName
+    value: productNameLink
+    comment: условное название кнопки, или 'productPhotoLink' при клике по фото, или 'productRatingLink' при клике по рейтингу'
+  - key: productName
+    value: Краска акриловая «Шедевр» цвет аквамарин 60 г
+    comment: название продукта, по которому кликнули
+  - key: productId
+    value: '22345678'
+    comment: идентификатор продукта, по которому кликнули
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы продукта
+  - key: productBelong
+    value: LeroyMerlin
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25'
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
+
+GA:addToShoppingList:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: productName
+    value: 'Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов'
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productQuantity
+    value: '2'
+    comment: на какое количество единиц изменилось количество товара
+  - key: productBelong
+    value: LeroyMerlin
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25' 
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
+
+GA:removeFromShoppingList:
+  - key: elementType
+    value: button
+  - key: elementBlock
+    value: productDetail
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productQuantity
+    value: '2'
+    comment: на какое количество единиц изменилось количество товара
+  - key: productBelong
+    value: LeroyMerlin
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productDiscount
+    value: '0.25' 
+    comment: прцент скидки, если скидки нет - передаем null
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
 
 GA:hover:
   - key: elementType
     value: hover
   - key: elementBlock
     value: productDetail
-    comment: блок, в котором расположен элемент
+    comment: блок (карусель, список), в котором расположен элемент
   - key: elementName
     value: mediaItem
     comment: название элемента
-  - key: elementText
-    value: Новинка
-    comment: текст элемента
+  - key: productName
+    value: Клей для виниловых обоев с индикатором Axton 35-45 м2 7-9 рулонов
+    comment: название товара
+  - key: productId
+    value: '18149575'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до снижения цены или null
+  - key: productBelong
+    value: LeroyMerlin
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен'
+  - key: productTag
+    value: bestPrice
+    comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
+  - key: productPosition
+    value : '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
 
-GA:scrollPage:
+GA:show:
   - key: elementType
-    value: scroll
+    value: block
   - key: elementBlock
-    value: pageContent
-    comment: блок, в котором происходит прокрутка страницы
-  - key: pagePosition
-    value: '50%'
-    comment: процент прокрученной страницы
+    value: ProfiPoints
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: elementName
+    value: 'Сезонные акции / modal' 
+    comment: 'название блока / modal'
+  - key: elementText
+    value: Скидки за объём на бренды для профессионалов
+    comment: Заголовок блока модального окна
 
-GA:formSubmit:
-  - key: formType
-    value: searchForm
-    comment: тип формы
-  - key: formName
-    value: "Поиск товаров"
-    comment: название формы
-  - key: formAction
-    value: submit
-    comment: действие формы
-  - key: formData
-    value: «клей для обоев»
-    comment: переданные данные в форме
+GA:promoView:
+  - key: elementType
+    value: banner
+  - key: 'elementBlock'
+    value: 'catalogue'
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: 'promotions' 
+    value: | 
+      [{
+        'name': '07-karusel', // расположение баннера
+        'creative': '07-proektirovanie-vannoi-komnaty', // уникальное название баннера
+        'position': '1' // номер позиции баннера (слева-направо от 1)
+        },
+        ...]
+    comment: Массив элементов (баннеров)
+      
+GA:promoClick:
+  - key: elementType
+    value: banner
+  - key: 'elementBlock'
+    value: 'catalogue'
+    comment: блок (карусель, список), в котором расположен элемент
+  - key: 'promotions' 
+    value: | 
+      [{
+        'name': '07-karusel', // расположение баннера
+        'creative': '07-proektirovanie-vannoi-komnaty', // уникальное название баннера
+        'position': '1' // номер позиции баннера (слева-направо от 1)
+        },
+        ...]
+    comment: Массив элементов (баннеров)
 
-GA:clickCategory:
-  - key: categoryId
-    value: '2345'
-    comment: идентификатор категории
-  - key: categoryName
-    value: «Строительные материалы»
-    comment: название категории
-  - key: categoryUrl
-    value: /category/building-materials/
-    comment: URL категории
+GA:focus:
+  - key: elementType
+    value: input
+  - key: elementBlock
+    value: 'makingOrder'
+  - key: elementName
+    value: 'lastName' 
+    comment: условное название поля
+  - key: elementText
+    value: 'Фамилия'
+    comment: подсказка внутри поля
+
+GA:checkout: 
+  - key: elementType 
+    value: 'page'
+    comment: тип страницы, в будущем будет депрецирован
+  - key: checkoutStepOption
+    value: 'LeroyMerlinPickup'
+    comment: наименование шага оформления заказа
+  - key: products
+    value: |
+      [
+      {productId: 89376231
+        productName: 'Штора на ленте Шарлотт 200x280 см цвет бежевый'
+        productParcelNumber: '1'
+        productParcelType: 'delivery'productPrice: 650
+        productQuantity: '1'
+        productShared: false},
+        ...]
+    comment: массив товаров в событии
+  - key: gpTransactionId
+    value: |
+      [
+        '4d16d9ea-efd6-4d4b-8282-93480cf04bb8',
+        ...]
+    comment: массив внутренних (solution) идентификаторов транзакций, передаётся через запятую
+
+GA:mediaLoad:
+  - key: elementType
+    value: 'mediaContent'
+  - key: elementBlock
+    value: 'productDetail'
+  - key: mediaLink
+    value: 'https://cdn.lemanapro.ru/lmru/image/upload/v1715180446/lmcode/ISjf5AjjikyoBptGBAEm6Q/89372833_01.png '
+    comment: ссылка на медиаэлемент
+  - key: productName
+    value: 'Штукатурка гипсовая Axton 2.5 кг'
+    comment: название товара
+  - key: productId
+    value: '81946335'
+    comment: артикул товара
+  - key: productPrice
+    value: '75.00'
+    comment: стоимость единицы товара
+  - key: productPrevPrice
+    value: '175.00'
+    comment: стоимость единицы товара до скидки. Если скидки нет, то передавать null
+  - key: productDiscount
+    value: '0.48'
+    comment: процент скидки. Если скидки нет, то передавать null
+  - key: productPosition
+    value: '3'
+    comment: позиция товара в блоке при подсчете слева-направо от 1
+  - key: productBelong
+    value: 'LM'
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LM - для товаров Леруа Мерлен'
+  - key: productTag
+    value: 'discount,onlineOnly' 
+    comment: теги товара

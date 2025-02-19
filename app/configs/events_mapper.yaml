@@ -142,19 +142,19 @@ GA:clickProduct:
   - key: productPrice
     value: '75.00'
     comment: стоимость единицы продукта
- - key: productBelong
+  - key: productBelong
     value: LeroyMerlin
     comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
- - key: productTag
+  - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
- - key: productDiscount
+  - key: productDiscount
     value: 0.25 
     comment: прцент скидки, если скидки нет - передаем null
- - key: productPrevPrice
+  - key: productPrevPrice
     value: '175.00'
     comment: стоимость единицы товара до снижения цены или null
- - key: productPosition
+  - key: productPosition
     value : 3
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
@@ -176,19 +176,19 @@ GA:impressions:
   - key: productPrice
     value: '75.00'
     comment: стоимость единицы продукта
- - key: productBelong
+  - key: productBelong
     value: LeroyMerlin
     comment: "принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LMServices -  для услуг, LM - для товаров Леруа Мерлен"
- - key: productTag
+  - key: productTag
     value: bestPrice
     comment: bestPrice для “Лучшей цены” и onlineOnly для “Только онлайн заказ”, а также остальные бейджи. При наличии нескольких передавать через разделитель “,”
- - key: productDiscount
+  - key: productDiscount
     value: 0.25 
     comment: прцент скидки, если скидки нет - передаем null
- - key: productPrevPrice
+  - key: productPrevPrice
     value: '175.00'
     comment: стоимость единицы товара до снижения цены или null
- - key: productPosition
+  - key: productPosition
     value : 3
     comment: позиция товара в блоке при подсчете слева-направо от 1
 
@@ -349,7 +349,7 @@ GA:focus:
     comment: подсказка внутри поля
 
 GA:checkout: 
-  - key: elementType: 
+  - key: elementType 
     value: 'page'
     comment: тип страницы, в будущем будет депрецирован
   - key: checkoutStepOption
@@ -398,7 +398,8 @@ GA:mediaLoad:
     value: '3'
     comment: позиция товара в блоке при подсчете слева-направо от 1
   - key: productBelong
-    value: 'LM', // принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LM - для товаров Леруа Мерлен
+    value: 'LM'
+    comment: 'принадлежность товара: LMMarketPlace - для товаров Маркетплейс, LM - для товаров Леруа Мерлен'
   - key: productTag
     value: 'discount,onlineOnly' 
     comment: теги товара

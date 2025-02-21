@@ -307,7 +307,6 @@ async def create_new_assignment(assignment_model_class: Type[BaseModel] = Assign
         group_id=uuid.uuid4().hex,  # created only on creation of new assignment (not on copying!)
         name=f'Новое ТЗ от {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}',
         status=Status.design.value,
-        issue='LM-1793',
         created_at=dt.datetime.now().isoformat(),
         updated_at=dt.datetime.now().isoformat(),
         description="""ОЧЕНЬ ВАЖНО!!! 

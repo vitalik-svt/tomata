@@ -92,7 +92,6 @@ class Status(Enum):
     design = 'Design'
     review = 'Review'
     implementation = 'Implementation'
-    discussion = 'Discussion'
     works_on_dev = 'Works on dev'
     works_on_prod = 'Works on prod'
 
@@ -245,7 +244,7 @@ class AssignmentBase(CustomBaseModel):
     )
     issue: Union[str, SkipJsonSchema[None]] = Field(
         default=None,
-        json_schema_extra={"title": "Issue number", "type": "string", "propertyOrder": 100004}
+        json_schema_extra={"title": "Issue number", "type": "string", "minLength": 1, "propertyOrder": 100004}
     )
     version: Union[int, SkipJsonSchema[None]] = Field(
         default=1,

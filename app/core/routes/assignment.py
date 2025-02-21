@@ -165,8 +165,8 @@ async def view_latest_assignment_route(
         collection: AsyncIOMotorCollection = Depends(db.collection_dependency(settings.app_assignments_collection))
 ):
 
-    latest_assignment_id, _ = await db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection)
-    assignment_data = await get_assignment_data_with_images(latest_assignment_id, collection, rename_mongo_id=True)
+    latest_assignment_id, _ = await db.max_value_in_group(group_field='group_id', group_val=group_id, find_max_in_field='version', collection=collection, additional_filter = {"status": {"$ne": "Design"}})
+    assignment_data = await get_assignment_data_with_images(latest_assignment_id, collection, rename_mongo_id=True) if latest_assignment_id else None
 
     return templates.TemplateResponse(f"{prefix}/view.html", {
         "request": request,

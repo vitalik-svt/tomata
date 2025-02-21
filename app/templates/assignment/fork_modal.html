@@ -34,12 +34,12 @@
         <div class="form-group">
             <label for="useNewSchema">Choose Schema</label><br/><br/>
             <div>
-                <input type="radio" id="useCurrentSchema" name="schema" value="false" checked>
-                <label for="useCurrentSchema">Use parent assignment schema</label>
+                <input type="radio" id="useNewSchema" name="schema" value="true" data-bs-toggle="tooltip" title="If schema changed dramatically, it may break new version!" checked>
+                <label for="useNewSchema">Apply newest available schema</label>
             </div>
             <div>
-                <input type="radio" id="useNewSchema" name="schema" value="true" data-bs-toggle="tooltip" title="If schema changed dramatically, it may break new version!">
-                <label for="useNewSchema">Apply newest available schema</label>
+                <input type="radio" id="useCurrentSchema" name="schema" value="false">
+                <label for="useCurrentSchema">Use parent assignment schema</label>
             </div>
         </div>
 

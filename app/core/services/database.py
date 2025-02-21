@@ -94,14 +94,20 @@ async def delete_by_filter(filter: dict, collection: AsyncIOMotorCollection) -> 
 
 
 async def max_value_in_group(
-        group_field: str, group_val: str, find_max_in_field: str, collection: AsyncIOMotorCollection
+        group_field: str, group_val: str, find_max_in_field: str, collection: AsyncIOMotorCollection, additional_filter: dict = None
 ) -> tuple[str | None, str | int]:
 
+    match_stage = {"$match": {group_field: group_val}}
+
+    if additional_filter:
+        match_stage["$match"].update(additional_filter)
+
     pipeline = [
-        {"$match": {group_field: group_val}},
+        match_stage,
         {"$sort": {find_max_in_field: -1}},
         {"$limit": 1},
     ]
+
     result = await collection.aggregate(pipeline).to_list(length=1)
 
     if result:

@@ -15,8 +15,8 @@ class TokenData(BaseModel):
 
 class Role(Enum):
     admin: str = 'admin'
-    editor: str = 'editor'
-    viewer: str = 'viewer'
+    # editor: str = 'editor'
+    # viewer: str = 'viewer'
 
 
 class User(BaseModel):

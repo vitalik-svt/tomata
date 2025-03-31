@@ -36,7 +36,7 @@
             </div>
             <!-- Кнопки управления, НЕ входящие в область раскрытия аккордеона -->
             <div class="btn-group d-flex">
-                <button class="btn btn-secondary btn-sm" type="button" onclick="viewGroupAssignment('{{ group_id }}')">View Latest Version</button>
+                <button class="btn btn-secondary btn-sm" type="button" onclick="viewGroupAssignment('{{ group_id }}')">Actual Version</button>
                 {% if current_user %}
                 <button class="btn btn-danger btn-sm" type="button" onclick="deleteGroup('{{ group_id }}')">Delete group</button>
                 {% endif %}
